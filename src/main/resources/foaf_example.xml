@@ -1,0 +1,37 @@
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:foaf="http://xmlns.com/foaf/0.1/"
+         xmlns:rel="http://www.perceive.net/schemas/relationship/"
+         >
+
+ <foaf:Person rdf:about="http://semprog.com/people/spiderman">
+   <foaf:name>Spiderman</foaf:name> 
+   <foaf:nick>Spiderman</foaf:nick>
+   <rel:enemyOf rdf:resource="http://semprog.com/people/green-goblin"/>
+ </foaf:Person>
+
+ <foaf:Person rdf:about="http://semprog.com/people/green-goblin">
+   <foaf:name>Green Goblin</foaf:name>
+   <rel:enemyOf rdf:resource="http://semprog.com/people/spiderman"/>
+ </foaf:Person> 
+ 
+ <foaf:Person rdf:about="http://semprog.com/people/peter">
+   <foaf:name>Peter Parker</foaf:name>
+   <foaf:nick>Pet_pak</foaf:nick>
+   <foaf:knows rdf:resource="http://semprog.com/people/harry"/>
+   <rel:friendOf rdf:resource="http://semprog.com/people/harry"/>
+ </foaf:Person>
+ 
+ <foaf:Person rdf:about="http://semprog.com/people/harry">
+   <foaf:name>Harry Osborn</foaf:name>
+   <foaf:nick>Harry</foaf:nick>
+   <rel:friendOf rdf:resource="http://semprog.com/people/peter"/>
+   <rel:childOf rdf:resource="http://semprog.com/people/norman"/>
+ </foaf:Person>
+ 
+ <foaf:Person rdf:about="http://semprog.com/people/norman">
+   <foaf:name>Norman Osborn</foaf:name>
+   <rel:parentOf rdf:resource="http://semprog.com/people/harry"/>
+   <foaf:knows rdf:resource="http://semprog.com/people/spiderman"/>
+ </foaf:Person>
+
+</rdf:RDF>
