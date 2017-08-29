@@ -53,7 +53,7 @@ public class AnnotationDBTest {
         String gffFile="/home/victor/Escritorio/tests_ngsengine/osativa.gff3";
         String outFile="/home/victor/Escritorio/tests_ngsengine/osativa.gp.txt";
 
-        String res = AnnotationDB.convertGffToGenePred( gffFile, outFile);
+        String res = AnnotationDB.convertGffToGenePred( gffFile, outFile, false);
 
         assertNotNull(res);
     }

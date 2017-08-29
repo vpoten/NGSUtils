@@ -19,7 +19,7 @@ import org.ngsutils.ontology.GOClusterer
 class GOClustererFactory {
     
     
-    public static void doGOCluster(workDir, taxonomyId='9606') {
+    public static void doGOCluster(workDir, taxonomyId='9606', data) {
         // load semantic data
         def graph = LinkedLifeDataFactory.loadRepository(LinkedLifeDataFactory.LIST_BASIC_GO, [taxonomyId], workDir)
         def geneQuery = new GeneQueryUtils(graph)
@@ -29,9 +29,7 @@ class GOClustererFactory {
         def annotation = NGSDataResource.create(graph)
         annotation.load(taxonomyId)
         
-        // TODO
-        
-        def data = []  // List<URI>
+        // def data = []  // List<URI>
             
         GOClusterer(graph, workDir, taxonomyId,  data)
     }

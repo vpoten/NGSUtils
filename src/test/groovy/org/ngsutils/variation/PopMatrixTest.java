@@ -4,7 +4,6 @@
  */
 package org.ngsutils.variation;
 
-import org.ngsutils.variation.PairValueVector;
 import java.util.List;
 import org.junit.After;
 import org.junit.AfterClass;

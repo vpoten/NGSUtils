@@ -111,16 +111,6 @@ class CorrelationRun implements Runnable {
 }
 
 /**
- *
- */
-class SparseResult {
-    double correlation
-    double pval
-    double corrPval
-    int numObs
-}   
-
-/**
  * Spearman correlation calculator
  * 
  * @author victor

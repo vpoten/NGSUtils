@@ -51,22 +51,6 @@ class MatProductRun implements Runnable {
 
 /**
  *
- */
-class PairValueVector implements Comparable<PairValueVector> {
-    double value
-    double [] vector
-    
-    /**
-     * sort in descending order
-     */
-    public int compareTo(PairValueVector other){
-        return other.value<=>this.value
-    }
-}
-
-
-/**
- *
  * @author victor
  */
 class PopMatrix {
