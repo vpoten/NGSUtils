@@ -17,7 +17,6 @@ import org.openrdf.sail.inferencer.fc.ForwardChainingRDFSInferencer
 
 import java.util.zip.GZIPOutputStream
 import org.ngsutils.Utils
-import org.ngsutils.semantic.memcached.MemcachedStore
 
 
 /**
@@ -179,9 +178,9 @@ class RDFLoad {
     /**
      * Utility method
      */
-    static Repository createMemRepository(boolean memcached, boolean inferencing, args = null ) 
+    static Repository createMemRepository(boolean inferencing, args = null ) 
     {
-        def store = (memcached) ? new MemcachedStore(args) : new MemoryStore()
+        def store = new MemoryStore()
         SailRepository therepository = (inferencing) ? 
             new SailRepository(new ForwardChainingRDFSInferencer(store)) : new SailRepository(store)
         
