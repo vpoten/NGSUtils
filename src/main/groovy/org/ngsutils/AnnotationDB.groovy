@@ -37,7 +37,7 @@ class AnnotationDB {
     //UCSC Sequences
     protected static String UCSC_SEQ_BASE = "ftp://hgdownload.cse.ucsc.edu/goldenPath/%/bigZips/"
     //GO Annotations
-    protected static String GO_BASE = "ftp://ftp.geneontology.org/pub/go/gene-associations/gene_association.%.gz"
+    protected static String GO_BASE = "ftp://ftp.geneontology.org/pub/go/gene-associations/"
     //Bowtie pre-build indexes
     protected static String BOWTIE_BASE = "ftp://ftp.cbcb.umd.edu/pub/data/bowtie_indexes/"
     //Plant genomes sequences
@@ -102,6 +102,7 @@ class AnnotationDB {
      */
     public static organismData(String orgId){
         // TODO : complete organism data
+        // TODO : update goName
         if( orgId=='9913' )
             return [id:'9913', name:"Bos taurus", sname:'bta', assembly:'bosTau4', kingdom:'animal',
                 keggName:'B.taurus', goName:'goa_cow', ucscSeq:'bosTau4.fa.gz', egeneInfo:'Mammalia' ]
@@ -133,12 +134,12 @@ class AnnotationDB {
 
         if( orgId=='9606' )
             return [id:'9606', name:"Homo sapiens", sname:'hsa', assembly:'hg19', kingdom:'animal',
-                keggName:'H.sapiens', goName:'goa_human', bowtie:'hg19', egeneInfo:'Mammalia',
+                keggName:'H.sapiens', goName:'goa_human.gaf.gz', bowtie:'hg19', egeneInfo:'Mammalia',
                 uniprotName:'HUMAN' ]
 
         if( orgId=='10090' )
             return [id:'10090', name:"Mus musculus", sname:'mmu', assembly:'mm9', kingdom:'animal',
-                keggName:'M.musculus', goName:'mgi', bowtie:'mm9', egeneInfo:'Mammalia',
+                keggName:'M.musculus', goName:'gene_association.mgi.gz', bowtie:'mm9', egeneInfo:'Mammalia',
                 uniprotName:'MOUSE' ]
 
         if( orgId=='39947' )
@@ -166,7 +167,7 @@ class AnnotationDB {
     
     static public String goAssocUrl( String taxId ) {
         def data = organismData(taxId)
-        return GO_BASE.replace("%", data.goName)
+        return GO_BASE + data.goName
     }
 
     static public String ensemblToGeneUrl( String taxId ) {
