@@ -5,6 +5,7 @@
  */
 package org.ngsutils;
 
+import java.util.ArrayList;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -39,6 +40,26 @@ public class GOClustererFactoryTest {
     
     @Test
     public void doGOClusterer() {
+        String workDir = "/home/victor/Escritorio/tests_ngsengine/go_clusterer/";
+        ArrayList<String> data = new ArrayList<String>();
         
+        // add some genes to data
+        data.add("SP110");
+        data.add("HLA-F");
+        data.add("STAT5A");
+        data.add("MMP10");
+        data.add("HLA-DQB1");
+        data.add("HLA-DQA1");
+        data.add("SYK");
+        data.add("GRHL3");
+        data.add("TYMP");
+        data.add("CD86");
+        data.add("ODF3B");
+        data.add("SLC15A3");
+        data.add("MAF");
+        data.add("ACP5");
+        data.add("CEACAM19");
+        
+        GOClustererFactory.doGOCluster(data, workDir, "9606");
     }
 }
