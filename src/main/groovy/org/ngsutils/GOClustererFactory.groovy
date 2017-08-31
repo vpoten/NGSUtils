@@ -25,12 +25,12 @@ class GOClustererFactory {
         def geneQuery = new GeneQueryUtils(graph)
         
         // prepare annotation
-        def goManager = new GOManager(graph)
-        def annotation = NGSDataResource.create(graph)
-        annotation.load(taxonomyId)
+//        def goManager = new GOManager(graph)
+//        def annotation = NGSDataResource.create(graph)
+//        annotation.load(taxonomyId)
         
-        def dataURIs = data.collect{geneQuery.getGeneByName(it) }.findAll{it!=null}
+        def dataURIs = data.collect{geneQuery.getGeneByName(it)}.findAll{it!=null}
             
-        GOClusterer(graph, workDir, taxonomyId,  dataURIs)
+        def clusterer = new GOClusterer(graph, workDir, taxonomyId,  dataURIs)
     }
 }

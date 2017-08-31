@@ -15,6 +15,7 @@ import org.ngsutils.semantic.rdfutils.SimpleGraph
 import org.openrdf.model.URI
 import weka.core.Attribute
 import weka.core.DistanceFunction
+import weka.core.FastVector
 import weka.core.Instance
 import weka.core.Instances
 
@@ -82,7 +83,7 @@ class GOClusterer {
         
         // get GOA file
         def urlSrc = AnnotationDB.goAssocUrl(taxId)
-        name = urlSrc.substring( urlSrc.lastIndexOf('/')+1 )
+        def name = urlSrc.substring( urlSrc.lastIndexOf('/')+1 )
         def goaFile = "${workDir}${taxId}/${name}"
         
         // create GO manager
@@ -91,12 +92,13 @@ class GOClusterer {
         goManager.setEcodeFactors( GOEvidenceCodes.ecodeFactorsSet1 )
         
         GOQueryUtils goQuery = new GOQueryUtils(graph)
-        GeneQueryUtils geneQuery = GeneQueryUtils(graph)
+        GeneQueryUtils geneQuery = new GeneQueryUtils(graph)
         def annotationMap = [:] as TreeMap
         
         //set up attributes and create weka dataset
-        def atts = [ new Attribute("label",null) ]
-        Instances instances = new Instances( linkType, atts, 0);
+        def atts = new FastVector<Attribute>()
+        atts.addElement(new Attribute("label"))
+        Instances instances = new Instances("GOCluster", atts, 0);
         
         data.each{ uri->
             def terms = goQuery.getTerms(uri)
