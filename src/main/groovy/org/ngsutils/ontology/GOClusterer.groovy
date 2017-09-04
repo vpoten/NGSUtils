@@ -77,9 +77,9 @@ class GOClusterer {
      * @param graph : semantic data graph
      * @param workDir
      * @param taxId : taxonomy id; i.e. 9606
-     * @param data : a list of feature URI to cluster (gene, uniprot, ensembl)
+     * @param dataset : weka instances
      */
-    public GOClusterer(SimpleGraph graph, String workDir, String taxId, List<URI> data) {
+    public GOClusterer(SimpleGraph graph, String workDir, String taxId, Instances dataset) {
         
         // get GOA file
         def urlSrc = AnnotationDB.goAssocUrl(taxId)
@@ -95,11 +95,6 @@ class GOClusterer {
         GeneQueryUtils geneQuery = new GeneQueryUtils(graph)
         def annotationMap = [:] as TreeMap
         
-        //set up attributes and create weka dataset
-        def atts = new FastVector<Attribute>()
-        atts.addElement(new Attribute("label"))
-        Instances instances = new Instances("GOCluster", atts, 0);
-        
         data.each{ uri->
             def terms = goQuery.getTerms(uri)
             def geneId = geneQuery.getGeneByURI(uri)
@@ -109,10 +104,6 @@ class GOClusterer {
             //create annotation
             def annot = new OntologyAnnotation(product:geneName,terms:(terms ?: [] as Set))
             annotationMap[label] = annot
-            
-            //add to instances
-            def vals = [ instances.attribute(0).addStringValue(label) ] as double []
-            instances.add( new Instance(1.0, vals) )
         }
         
         DistanceFunction distFunc = new GOFMBDistance(goManager, annotationMap)

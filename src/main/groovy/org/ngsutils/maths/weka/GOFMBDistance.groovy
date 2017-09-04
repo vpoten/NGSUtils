@@ -107,6 +107,7 @@ class GOFMBDistance implements DistanceFunction {
      */
     protected double goFMBDistance( Instance instnc1, Instance instnc2 ){
         //instance attributes: 0=label, 1=index
+        // TODO get annotation on the fly
         String g1 = instnc1.attribute(0).value((int) instnc1.value(0))
         String g2 = instnc2.attribute(0).value((int) instnc2.value(0))
         
