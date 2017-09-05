@@ -8,6 +8,7 @@ package org.ngsutils.maths.weka
 
 import org.ngsutils.fuzzy.FMBSimilarity
 import org.ngsutils.ontology.GOManager
+import weka.core.Attribute
 import weka.core.DistanceFunction
 import weka.core.Instance
 import weka.core.Instances
@@ -24,6 +25,7 @@ class GOFMBDistance implements DistanceFunction {
     protected Instances data = null // the instances used internally.
     protected FMBSimilarity similarity = null
     protected annotationMap //map with key=label, value=OntologyAnnotation
+    protected similarityCache = [:] as TreeMap
 
     /**
      * 
@@ -105,18 +107,53 @@ class GOFMBDistance implements DistanceFunction {
      * @param instnc2
      * @return
      */
-    protected double goFMBDistance( Instance instnc1, Instance instnc2 ){
-        //instance attributes: 0=label, 1=index
-        // TODO get annotation on the fly
-        String g1 = instnc1.attribute(0).value((int) instnc1.value(0))
-        String g2 = instnc2.attribute(0).value((int) instnc2.value(0))
+    protected double goFMBDistance( Instance instnc1, Instance instnc2 ) {
+        int classIdx = instnc1.classIndex()
         
+        // get present genes of each instance
+        def instGenes = [instnc1, instnc2].collect{ inst ->
+            (0..inst.numAttributes()-1).collect{ idx ->
+                def att = inst.attribute(idx)
+                if( idx==classIdx ){ return null }
+                return att.value(inst.value(idx)) == "1" ? att.name() : null
+            }.findAll{it!=null}
+        }
+        
+        // generate pairs for similarity calculation
+        def pairs = []
+        instGenes[0].each{g1-> instGenes[1].each{g2-> pairs << new Tuple(g1, g2)}}
+        
+        if( !pairs ) {
+            return 1.0
+        }
+        
+        // calculate mean of similarity
+        def total = pairs.sum{p-> geneGOFMBDistance(p[0], p[1])}
+        return total / ((double)pairs.size())
+    }
+    
+    /**
+     *
+     * Internal calc for two individual genes
+     */
+    protected double geneGOFMBDistance(String g1, String g2) {
         if( g1==g2 ){ return 0.0 }
+        
+        // first, look in cache to speed calculations
+        def value = similarityCache[g1 + '|' + g2]
+        value = value ?: similarityCache[g2 + '|' + g1]
+        
+        if(value != null) { // cache hit!
+            return 1.0 - value
+        }
         
         def a1 = annotationMap[g1]
         def a2 = annotationMap[g2]
         
-        return 1.0-similarity.afms(a1,a2)
-    }	
+        value = similarity.afms(a1, a2)
+        similarityCache[g1 + '|' + g2] = value  // store in cache
+        
+        return 1.0 - value
+    }
 }
 

@@ -95,16 +95,21 @@ class GOClusterer {
         GeneQueryUtils geneQuery = new GeneQueryUtils(graph)
         def annotationMap = [:] as TreeMap
         
-        data.each{ uri->
-            def terms = goQuery.getTerms(uri)
-            def geneId = geneQuery.getGeneByURI(uri)
-            def geneName = geneQuery.getGeneSymbol(geneId)
-            String label = uri.localName
-            
-            //create annotation
-            def annot = new OntologyAnnotation(product:geneName,terms:(terms ?: [] as Set))
-            annotationMap[label] = annot
+        // create annotation map using attribute names (genes)
+        int classIdx = dataset.classIndex()
+        
+        (0..dataset.numAttributes()-1).each{ i ->
+            def att = dataset.attribute(i)
+            if (i != classIdx) {
+                def uri = geneQuery.getGeneByName(att.name())
+                def terms = goQuery.getTerms(uri)
+                //create annotation
+                def annot = new OntologyAnnotation(product:att.name(), terms:(terms ?: [] as Set))
+                annotationMap[label] = annot
+            }
         }
+        
+        // TODO
         
         DistanceFunction distFunc = new GOFMBDistance(goManager, annotationMap)
         

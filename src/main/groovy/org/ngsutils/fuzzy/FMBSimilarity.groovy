@@ -27,7 +27,7 @@ class FMBSimilarity {
     }
     
     /**
-     * Fuzzy Based Meaure of Similarity (FMS)
+     * Fuzzy Based Measure of Similarity (FMS)
      * 
      * @param a1 : an OntologyAnnotation
      * @param a2 : an OntologyAnnotation
@@ -50,7 +50,7 @@ class FMBSimilarity {
     }
     
     /**
-     * Augmented Fuzzy Based Meaure of Similarity (AFMS)
+     * Augmented Fuzzy Based Measure of Similarity (AFMS)
      * 
      * @param a1 : an OntologyAnnotation
      * @param a2 : an OntologyAnnotation

@@ -27,10 +27,6 @@ class GOClustererFactory {
     public static void doGOCluster(data, workDir, taxonomyId='9606') {
         // load semantic data
         def graph = LinkedLifeDataFactory.loadRepository(LinkedLifeDataFactory.LIST_BASIC_GO, [taxonomyId], workDir)
-        
-        // def geneQuery = new GeneQueryUtils(graph)
-        // def dataURIs = data.collect{geneQuery.getGeneByName(it)}.findAll{it!=null}
-            
         def clusterer = new GOClusterer(graph, workDir, taxonomyId,  GOClustererFactory.createInstances(data))
     }
     
