@@ -92,28 +92,28 @@ public class Main {
         }
         else if( args[0] == OPT_GO_CLUSTER ){
 
-            if( args.length!=7 || !args[6].startsWith("--out=") ){
-                System.err.println("usage: "+OPT_GO_CLUSTER+" <MF|CC|BP> <over|under> <obo_file> <goa file> <diffgo_file> --out=<out dir>");
-                System.exit(-1);
-            }
-
-            String outDir=args[6].substring( args[6].indexOf('=')+1 );
-            if( !outDir.endsWith(File.separator) )
-                outDir+=File.separator;
-            
-            String outFile=outDir+args[5].substring(args[5].lastIndexOf(File.separator)+1)+".clust";
-
-            boolean useOver=true;
-
-            if( args[2].equals("under") )
-                useOver=false;
-
-            try {
-                GOClustererFactory.doGOCluster(args[3], args[4], args[5], new PrintStream(outFile), args[1], useOver);
-            } catch (Exception ex) {
-                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-                System.exit(-1);
-            }
+//            if( args.length!=7 || !args[6].startsWith("--out=") ){
+//                System.err.println("usage: "+OPT_GO_CLUSTER+" <MF|CC|BP> <over|under> <obo_file> <goa file> <diffgo_file> --out=<out dir>");
+//                System.exit(-1);
+//            }
+//
+//            String outDir=args[6].substring( args[6].indexOf('=')+1 );
+//            if( !outDir.endsWith(File.separator) )
+//                outDir+=File.separator;
+//            
+//            String outFile=outDir+args[5].substring(args[5].lastIndexOf(File.separator)+1)+".clust";
+//
+//            boolean useOver=true;
+//
+//            if( args[2].equals("under") )
+//                useOver=false;
+//
+//            try {
+//                GOClustererFactory.doGOCluster(args[3], args[4], args[5], new PrintStream(outFile), args[1], useOver);
+//            } catch (Exception ex) {
+//                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+//                System.exit(-1);
+//            }
             
         } else if( args[0] == OPT_SPLIT_FQ ){
 

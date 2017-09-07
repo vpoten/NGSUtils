@@ -115,7 +115,7 @@ class GOFMBDistance implements DistanceFunction {
             (0..inst.numAttributes()-1).collect{ idx ->
                 def att = inst.attribute(idx)
                 if( idx==classIdx ){ return null }
-                return att.value(inst.value(idx)) == "1" ? att.name() : null
+                return inst.stringValue(idx) == "1" ? att.name() : null
             }.findAll{it!=null}
         }
         

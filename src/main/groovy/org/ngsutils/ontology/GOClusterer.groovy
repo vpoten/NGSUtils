@@ -10,6 +10,7 @@ import org.ngsutils.semantic.LinkedLifeDataFactory
 import org.ngsutils.maths.weka.KernelFactory
 import org.ngsutils.maths.weka.GOFMBDistance
 import org.ngsutils.maths.weka.clusterer.AbstractKernelFuzzyClusterer
+import org.ngsutils.maths.weka.clusterer.CentralClustererUtils
 import org.ngsutils.semantic.query.GOQueryUtils
 import org.ngsutils.semantic.query.GeneQueryUtils
 import org.ngsutils.semantic.rdfutils.SimpleGraph
@@ -25,8 +26,6 @@ import weka.core.Instances
  * @author victor
  */
 class GOClusterer {
-
-    GOFMBDistance distances
     AbstractKernelFuzzyClusterer clusterer
     
 
@@ -75,7 +74,6 @@ class GOClusterer {
     
     /**
      *
-     * @param graph : semantic data graph
      * @param workDir
      * @param taxId : taxonomy id; i.e. 9606
      * @param data: list with genes
@@ -106,32 +104,37 @@ class GOClusterer {
         (0..dataset.numAttributes()-1).each{ i ->
             def att = dataset.attribute(i)
             if (i != classIdx) {
-                def uri = geneQuery.getGeneByName(att.name())
+                def label = att.name()
+                def uri = geneQuery.getGeneByName(label)
                 def terms = goQuery.getTerms(uri)
                 //create annotation
-                def annot = new OntologyAnnotation(product:att.name(), terms:(terms ?: [] as Set))
+                def annot = new OntologyAnnotation(product:label, terms:(terms ?: [] as Set))
                 annotationMap[label] = annot
             }
         }
         
-        // TODO create clusterer class ??
+        // create clusterer class
+        clusterer = CentralClustererUtils.buildClusterer(CentralClustererUtils.CLUST_KFCM)
         
         DistanceFunction distFunc = new GOFMBDistance(goManager, annotationMap)
-        
-        def kernel = KernelFactory.linear(instances, distFunc)
-        clusterer.setKernel(kernel)
+        clusterer.distances = KernelFactory.calcDistMatrix(dataset, distFunc)
         
         clusterer.buildClusterer(instances)
     }
 
+    /**
+     *
+     */
     private static Instances createInstances(data) {
         data = data.sort()
         
-        def attributes = data.collect{
+        def attributes = new FastVector()
+        
+        data.each{
             FastVector labels = new FastVector();
             labels.addElement("0");
             labels.addElement("1");
-            return new Attribute(it, labels)
+            attributes.addElement(new Attribute(it, labels))
         }
         
         Instances dataset = new Instances("features-go", attributes, 0);
@@ -140,7 +143,7 @@ class GOClusterer {
             def values = new double [data.size()]
             
             (0..data.size()-1).each{
-                values[it] = dataset.attribute(it).indexOf(it==i ? "1" : "0");
+                values[it] = dataset.attribute(it).indexOfValue(it==i ? "1" : "0");
             }
             
             dataset.add(new Instance(1.0, values))
