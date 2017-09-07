@@ -6,6 +6,7 @@
 package org.ngsutils.ontology;
 
 import org.ngsutils.AnnotationDB
+import org.ngsutils.semantic.LinkedLifeDataFactory
 import org.ngsutils.maths.weka.KernelFactory
 import org.ngsutils.maths.weka.GOFMBDistance
 import org.ngsutils.maths.weka.clusterer.AbstractKernelFuzzyClusterer
@@ -77,9 +78,13 @@ class GOClusterer {
      * @param graph : semantic data graph
      * @param workDir
      * @param taxId : taxonomy id; i.e. 9606
-     * @param dataset : weka instances
+     * @param data: list with genes
      */
-    public GOClusterer(SimpleGraph graph, String workDir, String taxId, Instances dataset) {
+    public GOClusterer(String workDir, String taxId, data) {
+        def dataset = GOClusterer.createInstances(data)
+        
+        // load semantic data
+        def graph = LinkedLifeDataFactory.loadRepository(LinkedLifeDataFactory.LIST_BASIC_GO, [taxId], workDir)
         
         // get GOA file
         def urlSrc = AnnotationDB.goAssocUrl(taxId)
@@ -109,7 +114,7 @@ class GOClusterer {
             }
         }
         
-        // TODO
+        // TODO create clusterer class ??
         
         DistanceFunction distFunc = new GOFMBDistance(goManager, annotationMap)
         
@@ -119,4 +124,28 @@ class GOClusterer {
         clusterer.buildClusterer(instances)
     }
 
+    private static Instances createInstances(data) {
+        data = data.sort()
+        
+        def attributes = data.collect{
+            FastVector labels = new FastVector();
+            labels.addElement("0");
+            labels.addElement("1");
+            return new Attribute(it, labels)
+        }
+        
+        Instances dataset = new Instances("features-go", attributes, 0);
+        
+        data.eachWithIndex{ val, i->
+            def values = new double [data.size()]
+            
+            (0..data.size()-1).each{
+                values[it] = dataset.attribute(it).indexOf(it==i ? "1" : "0");
+            }
+            
+            dataset.add(new Instance(1.0, values))
+        }
+        
+        return dataset
+    }
 }

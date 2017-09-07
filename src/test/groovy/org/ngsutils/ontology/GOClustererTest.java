@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.ngsutils;
+package org.ngsutils.ontology;
 
 import java.util.ArrayList;
 import org.junit.After;
@@ -17,9 +17,9 @@ import static org.junit.Assert.*;
  *
  * @author victor
  */
-public class GOClustererFactoryTest {
+public class GOClustererTest {
     
-    public GOClustererFactoryTest() {
+    public GOClustererTest() {
     }
     
     @BeforeClass
@@ -37,7 +37,7 @@ public class GOClustererFactoryTest {
     @After
     public void tearDown() {
     }
-    
+
     @Test
     public void doGOClusterer() {
         String workDir = "/home/victor/Escritorio/tests_ngsengine/go_clusterer/";
@@ -60,6 +60,6 @@ public class GOClustererFactoryTest {
         data.add("ACP5");
         data.add("CEACAM19");
         
-        GOClustererFactory.doGOCluster(data, workDir, "9606");
+        GOClusterer clusterer = new GOClusterer(workDir, "9606", data);
     }
 }
