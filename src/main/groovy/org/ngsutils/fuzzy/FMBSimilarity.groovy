@@ -8,6 +8,7 @@ package org.ngsutils.fuzzy
 import org.ngsutils.ontology.GOManager
 import org.ngsutils.ontology.OntologyAnnotation
 import org.ngsutils.ontology.FMBGOntologyWrap
+import org.apache.commons.math3.exception.TooManyEvaluationsException
 
 /**
  *
@@ -84,7 +85,13 @@ class FMBSimilarity {
         
         // 3 - calculate sugeno measures
         (0..1).each{ gdens[it]+=nca }
-        def suglm = gdens.collect{ new SugenoLambdaMeasure(it.values()) }
+        def suglm = null
+        
+        try {
+            suglm = gdens.collect{ new SugenoLambdaMeasure(it.values()) }
+        } catch(TooManyEvaluationsException ex) {
+            return 0.0d
+        }
         
         return sugenoSum(inters.values() as List, suglm[0], suglm[1])
     }

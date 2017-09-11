@@ -150,7 +150,12 @@ class GOFMBDistance implements DistanceFunction {
         def a1 = annotationMap[g1]
         def a2 = annotationMap[g2]
         
-        value = similarity.afms(a1, a2)
+        if(!a1.terms || !a2.terms) {
+            value = 1.0
+        }
+        else {
+            value = similarity.afms(a1, a2)
+        }
         similarityCache[g1 + '|' + g2] = value  // store in cache
         
         return 1.0 - value

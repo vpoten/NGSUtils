@@ -7,6 +7,7 @@ package org.ngsutils.fuzzy
 
 import org.apache.commons.math3.analysis.polynomials.PolynomialFunction
 import org.apache.commons.math3.analysis.solvers.LaguerreSolver
+import org.apache.commons.math3.exception.TooManyEvaluationsException
 
 
 /**
@@ -16,8 +17,8 @@ import org.apache.commons.math3.analysis.solvers.LaguerreSolver
 class SugenoLambdaMeasure {
 	
     static final double relativeAccuracy = 1.0e-12
-    static final double absoluteAccuracy = 1.0e-8
-    static final int maxEval = 100
+    static final double absoluteAccuracy = 1.0e-9
+    static final int maxEval = 1000
     static final double NEAR_ZERO = 1.0e-12
     static final double bracketStep = 1.0
     
@@ -38,12 +39,13 @@ class SugenoLambdaMeasure {
         current = current.add(polyMinusOne)
         
         //the polynomial equation characterized by 'current' has an unique solution l>-1
-        def solver = new LaguerreSolver(relativeAccuracy, absoluteAccuracy)
-        double root = 0.0
+        double min
+        double max
         
         if( Math.signum(current.value(-1)*current.value(-NEAR_ZERO))<0.0 ) {
             // root in ]-1,0[ interval
-            root = solver.solve(maxEval, current, -1, -NEAR_ZERO)
+            min = -1.0
+            max = -NEAR_ZERO
         }
         else{
             // root in ]0,+infinite] interval
@@ -54,10 +56,38 @@ class SugenoLambdaMeasure {
                 upper += bracketStep
             }
 
-            root = solver.solve(maxEval, current, NEAR_ZERO, upper)
+            min = NEAR_ZERO
+            max = upper
         }
         
-        lambda = root
+        lambda = trySolve(current, min, max)
+    }
+    
+    private double trySolve(function, double min, double max) {
+        double relAcc = relativeAccuracy
+        double absAcc = absoluteAccuracy
+        def solver = new LaguerreSolver(relAcc, absAcc)
+        Double root = null
+        int totalEval = maxEval
+        
+        while(root==null && absAcc<1e-3){
+            try{
+                root = solver.solve(maxEval, function, min, max)
+            }
+            catch (TooManyEvaluationsException ex){
+                root = null
+                relAcc *= 10.0d
+                absAcc *= 10.0d
+                solver = new LaguerreSolver(relAcc, absAcc)
+                totalEval += maxEval
+            }
+        }
+        
+        if(root==null) {
+            throw TooManyEvaluationsException(totalEval)
+        }
+        
+        return root
     }
     
     /**
