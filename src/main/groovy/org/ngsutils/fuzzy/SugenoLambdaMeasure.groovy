@@ -18,7 +18,7 @@ class SugenoLambdaMeasure {
 	
     static final double relativeAccuracy = 1.0e-12
     static final double absoluteAccuracy = 1.0e-9
-    static final int maxEval = 1000
+    static final int maxEval = 10000
     static final double NEAR_ZERO = 1.0e-12
     static final double bracketStep = 1.0
     

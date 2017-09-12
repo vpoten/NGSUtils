@@ -151,7 +151,7 @@ class GOFMBDistance implements DistanceFunction {
         def a2 = annotationMap[g2]
         
         if(!a1.terms || !a2.terms) {
-            value = 1.0
+            value = 0.0  // no similarity
         }
         else {
             value = similarity.afms(a1, a2)
