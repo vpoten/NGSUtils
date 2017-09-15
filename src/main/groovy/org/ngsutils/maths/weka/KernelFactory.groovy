@@ -29,6 +29,7 @@ class KernelFactory {
         for(int i=0; i<n; i++) {
             for(int j=i; j<n; j++) {
                 double val = distFunc.distance(data.instance(i),data.instance(j))
+                System.out.println(i + ' - ' + j + ' = ' + val)
                 mat.set(i,j,val)
                 mat.set(j,i,val)
             }

@@ -42,6 +42,7 @@ public class GOClustererTest {
     public void doGOClusterer() {
         String workDir = "/home/victor/Escritorio/tests_ngsengine/go_clusterer/";
         ArrayList<String> data = new ArrayList<String>();
+        ArrayList<String> namespaces = new ArrayList<String>();
         
         // add some genes to data
         data.add("SP110");
@@ -60,6 +61,9 @@ public class GOClustererTest {
         data.add("ACP5");
         data.add("CEACAM19");
         
-        GOClusterer clusterer = new GOClusterer(workDir, "9606", data);
+        //namespaces.add("molecular_function");
+        namespaces.add("biological_process");
+        
+        GOClusterer clusterer = new GOClusterer(workDir, "9606", data, namespaces);
     }
 }

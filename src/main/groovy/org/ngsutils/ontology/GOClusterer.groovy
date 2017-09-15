@@ -78,7 +78,7 @@ class GOClusterer {
      * @param taxId : taxonomy id; i.e. 9606
      * @param data: list with genes
      */
-    public GOClusterer(String workDir, String taxId, data) {
+    public GOClusterer(String workDir, String taxId, data, namespaces) {
         def dataset = GOClusterer.createInstances(data)
         
         // load semantic data
@@ -107,6 +107,10 @@ class GOClusterer {
                 def label = att.name()
                 def uri = geneQuery.getGeneByName(label)
                 def terms = goQuery.getTerms(uri)
+                
+                // filter terms in namespaces
+                terms = terms.findAll{goManager.getNamespace(it) in namespaces}
+                
                 //create annotation
                 def annot = new OntologyAnnotation(product:label, terms:(terms ?: [] as Set))
                 annotationMap[label] = annot
@@ -119,7 +123,7 @@ class GOClusterer {
         DistanceFunction distFunc = new GOFMBDistance(goManager, annotationMap)
         clusterer.distances = KernelFactory.calcDistMatrix(dataset, distFunc)
         
-        clusterer.buildClusterer(instances)
+        clusterer.buildClusterer(dataset)
     }
 
     /**

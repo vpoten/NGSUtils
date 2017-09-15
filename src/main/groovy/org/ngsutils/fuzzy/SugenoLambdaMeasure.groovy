@@ -34,30 +34,25 @@ class SugenoLambdaMeasure {
      * @param densities : a list or array of double
      */
     public SugenoLambdaMeasure(densities) {
+        if(densities.size()==1) {
+            lambda = 0
+            return
+        }
         PolynomialFunction current = polyOne
         densities.each{ current = current.multiply(new PolynomialFunction([1,it] as double[])) }
         current = current.add(polyMinusOne)
         
         //the polynomial equation characterized by 'current' has an unique solution l>-1
-        double min
-        double max
+        double min, max
         
-        if( Math.signum(current.value(-1)*current.value(-NEAR_ZERO))<0.0 ) {
-            // root in ]-1,0[ interval
-            min = -1.0
-            max = -NEAR_ZERO
-        }
-        else{
-            // root in ]0,+infinite] interval
-            double upper = bracketStep
-            double fLower = current.value(NEAR_ZERO)
-            
-            while( Math.signum(fLower*current.value(upper))>-1.0 ){
-                upper += bracketStep
-            }
-
-            min = NEAR_ZERO
-            max = upper
+        try {
+            // check if root in ]-1,0[ interval or ]0, +infinite[
+            boolean inFirstInter = (Math.signum(current.value(-1)*current.value(-NEAR_ZERO)) < 0.0)
+            min = inFirstInter ? -1.0 : NEAR_ZERO
+            max = inFirstInter ?-NEAR_ZERO : findUpperLimit(current, current.value(NEAR_ZERO), 1.0)
+        } catch (TooManyEvaluationsException ex) {
+            lambda = 0
+            return
         }
         
         lambda = trySolve(current, min, max)
@@ -84,10 +79,34 @@ class SugenoLambdaMeasure {
         }
         
         if(root==null) {
-            throw TooManyEvaluationsException(totalEval)
+            throw new TooManyEvaluationsException(totalEval)
         }
         
         return root
+    }
+    
+    private double findUpperLimit(function, fLower, initVal) {
+        double upper = initVal
+        double step = 1
+        double attempts = 0
+        int currentPower = 0
+        double funcVal = function.value(upper)
+        
+        while( Math.signum(fLower*funcVal)>-1.0 ) {
+            int power = (int)(attempts * 0.1)
+            if (power > currentPower) {
+                step *= 2
+                currentPower = power
+            }
+            upper += step
+            attempts += 1
+            funcVal = function.value(upper)
+            
+            if(attempts>maxEval) {
+                throw new TooManyEvaluationsException(maxEval)
+            }
+        }
+        return upper
     }
     
     /**
