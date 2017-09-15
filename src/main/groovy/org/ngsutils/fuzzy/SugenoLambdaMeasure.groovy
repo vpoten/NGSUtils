@@ -27,7 +27,7 @@ class SugenoLambdaMeasure {
     static final def polyMinusOne = new PolynomialFunction([-1,-1] as double[])
     
     
-    final double lambda
+    final Double lambda
     
     /**
      *
@@ -45,17 +45,39 @@ class SugenoLambdaMeasure {
         //the polynomial equation characterized by 'current' has an unique solution l>-1
         double min, max
         
+        // check if root in ]-1,0[ interval or ]0, +infinite[
+        double near_zero_val = current.value(-NEAR_ZERO)
+        double valMinusOne = -1.0
+        boolean inFirstInter = (Math.signum(current.value(valMinusOne)*near_zero_val) < 0.0)
+        
         try {
-            // check if root in ]-1,0[ interval or ]0, +infinite[
-            boolean inFirstInter = (Math.signum(current.value(-1)*current.value(-NEAR_ZERO)) < 0.0)
-            min = inFirstInter ? -1.0 : NEAR_ZERO
-            max = inFirstInter ?-NEAR_ZERO : findUpperLimit(current, current.value(NEAR_ZERO), 1.0)
+            min = inFirstInter ? valMinusOne : NEAR_ZERO
+            max = inFirstInter ? -NEAR_ZERO : findUpperLimit(current)
         } catch (TooManyEvaluationsException ex) {
-            lambda = 0
-            return
+            lambda = null  // not possible to determine root interval in ]0,+infinite[
+            
+            for(; valMinusOne>-1.1; valMinusOne-=1e-3) {
+                if(Math.signum(current.value(valMinusOne)*near_zero_val) < 0.0) {
+                    inFirstInter = true
+                    break
+                }
+            }
+            
+            if(inFirstInter) {
+                // we found a precision issue, the root is near -1
+                min = valMinusOne
+                max = -NEAR_ZERO
+            }
+            else {
+                return
+            }
         }
         
         lambda = trySolve(current, min, max)
+        
+        if(lambda<=-1.0) {
+            lambda = -1.0 + 1e-3
+        }
     }
     
     private double trySolve(function, double min, double max) {
@@ -85,12 +107,13 @@ class SugenoLambdaMeasure {
         return root
     }
     
-    private double findUpperLimit(function, fLower, initVal) {
-        double upper = initVal
+    private double findUpperLimit(function) {
+        double upper = 1.0
         double step = 1
         double attempts = 0
         int currentPower = 0
         double funcVal = function.value(upper)
+        double fLower = function.value(NEAR_ZERO)
         
         while( Math.signum(fLower*funcVal)>-1.0 ) {
             int power = (int)(attempts * 0.1)
@@ -113,6 +136,7 @@ class SugenoLambdaMeasure {
      *
      */
     public double value(double a, double b) {
+        // TODO
         return a+b+lambda*a*b
     }
     
@@ -120,6 +144,7 @@ class SugenoLambdaMeasure {
      * @param array : list or array with 2 or more elements
      */
     public double value(array) {
+        // TODO review
         double measure = value(array[0],array[1])
         
         for(int i=2; i<array.size(); i++) {
