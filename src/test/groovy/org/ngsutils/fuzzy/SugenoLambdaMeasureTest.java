@@ -17,6 +17,8 @@ import static org.junit.Assert.*;
  */
 public class SugenoLambdaMeasureTest {
     
+    static private double ZERO = 1e-3;
+    
     public SugenoLambdaMeasureTest() {
     }
     
@@ -43,27 +45,37 @@ public class SugenoLambdaMeasureTest {
         double [] densities = new double [] {0.4, 0.3, 0.2};
         instance = new SugenoLambdaMeasure(densities);
         double expected = 0.3719;
-        assertTrue( Math.abs(instance.getLambda()-expected)<1e-3 );
+        assertTrue( Math.abs(instance.getLambda()-expected)<ZERO );
         
         densities = new double [] {0.5, 0.4, 0.3};
         instance = new SugenoLambdaMeasure(densities);
         expected = -0.4515;
-        assertTrue( Math.abs(instance.getLambda()-expected)<1e-3 );
+        assertTrue( Math.abs(instance.getLambda()-expected)<ZERO );
         
         densities = new double [] {0.58, 0.44, 0.65};
         instance = new SugenoLambdaMeasure(densities);
         expected = -0.864;
-        assertTrue( Math.abs(instance.getLambda()-expected)<1e-3 );
+        assertTrue( Math.abs(instance.getLambda()-expected)<ZERO );
         
         expected = 0.8;
-        assertTrue( Math.abs(instance.value(0.58,0.44)-expected)<1e-3 );
+        assertTrue( Math.abs(instance.value(0.58,0.44)-expected)<ZERO );
         
         expected = 0.903;
-        assertTrue( Math.abs(instance.value(0.58,0.65)-expected)<1e-3 );
+        assertTrue( Math.abs(instance.value(0.58,0.65)-expected)<ZERO );
         
         expected = 1.0;
         double val = instance.value(densities);
-        assertTrue( Math.abs(val-expected)<1e-3 );
+        assertTrue( Math.abs(val-expected)<ZERO*1e-3 );
+        
+        densities = new double [] {0.4, 0.3, 0.2, 0.5, 0.6};
+        instance = new SugenoLambdaMeasure(densities);
+        expected = 1.0;
+        val = instance.value(densities);
+        assertTrue( Math.abs(val-expected)<ZERO*1e-3 );
+        double val2 = instance.value(new double [] {0.4, 0.3, 0.2});
+        assertTrue(val2 < val);
+        double val3 = instance.value(new double [] {0.4, 0.3, 0.2, 0.6});
+        assertTrue(val2 < val3);
     }
     
 }

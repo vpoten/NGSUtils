@@ -122,8 +122,19 @@ class GOClusterer {
         
         DistanceFunction distFunc = new GOFMBDistance(goManager, annotationMap)
         clusterer.distances = KernelFactory.calcDistMatrix(dataset, distFunc)
+        printDistances(data.sort(), clusterer.distances)
         
         clusterer.buildClusterer(dataset)
+    }
+    
+    private static void printDistances(labels, mat) {
+        int n = mat.rowDimension
+        
+        for(int i=0; i<n; i++) {
+            for(int j=i; j<n; j++) {
+                System.out.println(labels[i] + ',' + labels[j] + ',' + mat.get(i,j))
+            }
+        }
     }
 
     /**

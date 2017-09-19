@@ -61,7 +61,7 @@ public class GOClustererTest {
         data.add("ACP5");
         data.add("CEACAM19");
         
-        //namespaces.add("molecular_function");
+        namespaces.add("molecular_function");
         namespaces.add("biological_process");
         
         GOClusterer clusterer = new GOClusterer(workDir, "9606", data, namespaces);

@@ -133,10 +133,9 @@ class SugenoLambdaMeasure {
     }
     
     /**
-     *
+     * Basic calc of Sugeno lambda measure
      */
     public double value(double a, double b) {
-        // TODO
         return a+b+lambda*a*b
     }
     
@@ -144,7 +143,6 @@ class SugenoLambdaMeasure {
      * @param array : list or array with 2 or more elements
      */
     public double value(array) {
-        // TODO review
         double measure = value(array[0],array[1])
         
         for(int i=2; i<array.size(); i++) {

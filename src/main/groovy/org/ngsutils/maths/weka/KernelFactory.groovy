@@ -24,12 +24,14 @@ class KernelFactory {
     static Matrix calcDistMatrix(Instances data, DistanceFunction distFunc){
         int n = data.numInstances()
         
+        //  TODO remove debug println
+        // double val1 = distFunc.distance(data.instance(1),data.instance(4))
+        
         Matrix mat = new Matrix(n,n)
         
         for(int i=0; i<n; i++) {
             for(int j=i; j<n; j++) {
                 double val = distFunc.distance(data.instance(i),data.instance(j))
-                System.out.println(i + ' - ' + j + ' = ' + val)
                 mat.set(i,j,val)
                 mat.set(j,i,val)
             }
