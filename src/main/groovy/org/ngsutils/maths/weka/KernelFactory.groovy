@@ -25,7 +25,7 @@ class KernelFactory {
         int n = data.numInstances()
         
         //  TODO remove debug println
-        // double val1 = distFunc.distance(data.instance(1),data.instance(4))
+        double val1 = distFunc.distance(data.instance(0),data.instance(13))
         
         Matrix mat = new Matrix(n,n)
         
