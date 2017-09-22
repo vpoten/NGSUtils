@@ -20,7 +20,7 @@ class FMBSimilarity {
     /**
      *
      */
-    def setOntologyWrap(ontObj){
+    def setOntologyWrap(ontObj) {
         if( ontObj instanceof GOManager ) {
             ontology = new FMBGOntologyWrap(goManager:ontObj)
         }
@@ -92,11 +92,11 @@ class FMBSimilarity {
     /**
      *
      */
-    protected double sugenoSum(intDens, suglm1, suglm2){
+    protected double sugenoSum(intDens, suglm1, suglm2) {
         if( !intDens ){ return 0.0 }
         if( intDens.size()==1 ){ return intDens[0] }
         
-        return (suglm1.value(intDens)+suglm2.value(intDens))*0.5
+        return (Math.min(suglm1.value(intDens),1.0) + Math.min(suglm2.value(intDens),1.0)) * 0.5
     }
     
 }

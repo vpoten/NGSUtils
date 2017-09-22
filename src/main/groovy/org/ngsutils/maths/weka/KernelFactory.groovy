@@ -23,10 +23,6 @@ class KernelFactory {
      */ 
     static Matrix calcDistMatrix(Instances data, DistanceFunction distFunc){
         int n = data.numInstances()
-        
-        //  TODO remove debug println
-        double val1 = distFunc.distance(data.instance(0),data.instance(13))
-        
         Matrix mat = new Matrix(n,n)
         
         for(int i=0; i<n; i++) {

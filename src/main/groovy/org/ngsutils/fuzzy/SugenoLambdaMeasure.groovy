@@ -52,13 +52,10 @@ class SugenoLambdaMeasure {
      * @param array : list or array with 2 or more elements
      */
     public double value(array) {
-        double measure = value(array[0],array[1])
-        
-        for(int i=2; i<array.size(); i++) {
-            measure = value(measure,array[i])
-        }
-        
-        return measure
+       def subsets = (0..array.size()-1).step(2).collect{
+           ((it+1)<array.size()) ? value(array[it], array[it+1]) : array[it]
+       }
+       return subsets.inject(0){acc, val-> value(acc, val)}
     }
     
 }
