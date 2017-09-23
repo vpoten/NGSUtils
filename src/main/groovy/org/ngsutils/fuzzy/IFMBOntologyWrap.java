@@ -4,6 +4,8 @@
  */
 package org.ngsutils.fuzzy;
 
+import java.util.Collection;
+
 /**
  * Interface for FMBSimilarity ontology wrappers
  * 
@@ -22,5 +24,7 @@ public interface IFMBOntologyWrap {
     
     // get the evidence reliability of the annotation
     public Double getEvidence(Object product, Object term);
-    
+            
+    // checks whether term is ancestor of any term in given collection
+    public boolean isAncestor(Object term, Collection terms);
 }

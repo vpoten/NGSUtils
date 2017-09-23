@@ -44,4 +44,22 @@ class FMBGOntologyWrap implements IFMBOntologyWrap {
     public Double getEvidence(Object product, Object term){
         goManager.getEvidence(product, term)
     }
+    
+    /**
+     *
+     */
+    public boolean isAncestor(Object term, Collection terms){
+        def uriTerm = goManager.createTermURI(term)
+        
+        for(t2 in terms) {
+            if(term == t2) {
+                continue
+            }
+            def ancestors = goManager.getAncestors(t2)
+            if(uriTerm in ancestors){
+                return true
+            }
+        }
+        return false
+    }
 }

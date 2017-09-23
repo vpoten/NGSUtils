@@ -71,6 +71,11 @@ class FMBSimilarity {
             }
         }
         
+        // remove redundant ancestors
+        def ncaTerms = nca.keySet()
+        def ncaRedundant = ncaTerms.findAll{ontology.isAncestor(it, ncaTerms)}
+        ncaRedundant.each{nca.remove(it)}
+        
         // 2 - build augmented sets
         def gdens = [a1,a2].collect{ a-> 
             def map = [:]

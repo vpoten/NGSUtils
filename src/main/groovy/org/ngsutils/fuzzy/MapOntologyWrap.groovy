@@ -81,5 +81,9 @@ class MapOntologyWrap implements IFMBOntologyWrap {
     public Double getEvidence(Object product, Object term) {
         return 1.0
     }
+    
+    public boolean isAncestor(Object term, Collection terms) {
+        return false
+    }
 }
 
