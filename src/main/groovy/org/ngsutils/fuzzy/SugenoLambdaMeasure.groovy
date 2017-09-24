@@ -15,13 +15,13 @@ import org.ngsutils.maths.PolynomialRootFinder
  */
 class SugenoLambdaMeasure {
 	
-    static final double NEAR_ZERO = 1.0e-12
+    static final double NEAR_ZERO = 1.0e-9
     
     //polynomial constants
     static final def polyOne = new PolynomialFunction([1] as double[])
     static final def polyMinusOne = new PolynomialFunction([-1,-1] as double[])
     
-    final Double lambda
+    final Double lambda = null
     
     /**
      *
@@ -38,7 +38,11 @@ class SugenoLambdaMeasure {
         
         def roots = PolynomialRootFinder.findRoots(current.coefficients)
 
-        lambda = (roots as List).find{it.isReal() && it.getReal()>-1.0d && Math.abs(it.getReal())>NEAR_ZERO}?.getReal()
+        double zero = NEAR_ZERO
+        while(lambda==null) {
+            lambda = (roots as List).find{it.isReal() && it.getReal()>-1.0d && Math.abs(it.getReal())>zero}?.getReal()
+            zero *= 0.1d
+        }
     }
     
     /**
