@@ -16,6 +16,7 @@ import org.ngsutils.ontology.FMBGOntologyWrap
 class FMBSimilarity {
 	
     IFMBOntologyWrap ontology
+    def logWriter
     
     /**
      *
@@ -104,5 +105,15 @@ class FMBSimilarity {
         return (Math.min(suglm1.value(intDens),1.0) + Math.min(suglm2.value(intDens),1.0)) * 0.5
     }
     
+    /**
+     *
+     */
+    protected void logSimilarity() {
+        if( logWriter==null ) {
+            return
+        }
+        
+        // TODO
+        // writer.writeLine()
+    }
 }
-
