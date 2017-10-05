@@ -92,7 +92,10 @@ class FMBSimilarity {
         (0..1).each{ gdens[it]+=nca }
         def suglm = gdens.collect{ new SugenoLambdaMeasure(it.values()) }
         
-        return sugenoSum(inters.values() as List, suglm[0], suglm[1])
+        double similarity = sugenoSum(inters.values() as List, suglm[0], suglm[1])
+        logSimilarity(a1.product, a2.product, gdens, nca, inters)
+        
+        return similarity
     }
     
     /**
@@ -108,11 +111,11 @@ class FMBSimilarity {
     /**
      *
      */
-    protected void logSimilarity() {
+    protected void logSimilarity(feat1, feat2, annotations, ancestors) {
         if( logWriter==null ) {
             return
         }
-        
+        def inters = annotations[0].intersect(annotations[1])
         // TODO
         // writer.writeLine()
     }
