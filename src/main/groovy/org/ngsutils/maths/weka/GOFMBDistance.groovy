@@ -6,6 +6,7 @@
 
 package org.ngsutils.maths.weka
 
+import groovy.json.JsonOutput
 import org.ngsutils.fuzzy.FMBSimilarity
 import org.ngsutils.ontology.GOManager
 import weka.core.Attribute
@@ -26,23 +27,25 @@ class GOFMBDistance implements DistanceFunction {
     protected FMBSimilarity similarity = null
     protected annotationMap //map with key=label, value=OntologyAnnotation
     protected similarityCache = [:] as TreeMap
-    protected logWriter = null
+    protected logFile = null
+    protected logObjectList = null
 
     /**
      * 
      */ 
-    public GOFMBDistance(GOManager gom, annotation, logFile=null){
-        if(logFile!=null) {
-            logWriter = new File(logFile).newWriter()
+    public GOFMBDistance(GOManager gom, annotation, _logFile=null) {
+        if(_logFile!=null) {
+            logObjectList = []
+            logFile = new File(_logFile)
         }
         
-        similarity = logWriter ? new FMBSimilarity(logWriter: logWriter) : new FMBSimilarity()
+        similarity = logFile ? new FMBSimilarity(logObjectList: logObjectList) : new FMBSimilarity()
         similarity.setOntologyWrap(gom)
         annotationMap = annotation
     }
     
-    public void closeLog() {
-        logWriter?.close()
+    public void endLog() {
+        logFile?.write(JsonOutput.prettyPrint(JsonOutput.toJson(logObjectList)))
     }
 
     public void setInstances(Instances insts) {

@@ -16,7 +16,7 @@ import org.ngsutils.ontology.FMBGOntologyWrap
 class FMBSimilarity {
 	
     IFMBOntologyWrap ontology
-    def logWriter
+    def logObjectList
     
     /**
      *
@@ -93,7 +93,7 @@ class FMBSimilarity {
         def suglm = gdens.collect{ new SugenoLambdaMeasure(it.values()) }
         
         double similarity = sugenoSum(inters.values() as List, suglm[0], suglm[1])
-        logSimilarity(a1.product, a2.product, gdens, nca, inters)
+        appendToLog(a1.product, a2.product, gdens, nca, similarity)
         
         return similarity
     }
@@ -111,12 +111,25 @@ class FMBSimilarity {
     /**
      *
      */
-    protected void logSimilarity(feat1, feat2, annotations, ancestors) {
-        if( logWriter==null ) {
+    protected void appendToLog(feat1, feat2, annotations, nca, similarity) {
+        if( logObjectList==null ) {
             return
         }
+        
+        def makeFeat = { name, terms ->
+            ['name': name, 'annotations': terms.keySet().collect{['id': it, 'ic': terms[it]]}]
+        }
+        
         def inters = annotations[0].intersect(annotations[1])
-        // TODO
-        // writer.writeLine()
+        
+        def simObject = [
+            'product1': makeFeat(feat1, annotations[0]),
+            'product2': makeFeat(feat2, annotations[1]),
+            'nearestCommonAncestors': nca.keySet().collect{['id': it, 'ic': nca[it]]},
+            'intersection': inters.keySet().collect{['id': it, 'ic': inters[it]]},
+            'similarity': similarity
+        ]
+        
+        logObjectList << simObject
     }
 }

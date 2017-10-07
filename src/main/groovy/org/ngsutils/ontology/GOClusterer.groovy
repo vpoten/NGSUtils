@@ -120,7 +120,7 @@ class GOClusterer {
         // create clusterer class
         clusterer = CentralClustererUtils.buildClusterer(CentralClustererUtils.CLUST_KFCM)
         
-        DistanceFunction distFunc = new GOFMBDistance(goManager, annotationMap)
+        DistanceFunction distFunc = new GOFMBDistance(goManager, annotationMap, new File(workDir, 'distances.log').path)
         clusterer.distances = KernelFactory.calcDistMatrix(dataset, distFunc)
         printDistances(data.sort(), clusterer.distances)
         
