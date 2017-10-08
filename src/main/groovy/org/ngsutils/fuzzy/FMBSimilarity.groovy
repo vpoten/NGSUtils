@@ -84,6 +84,8 @@ class FMBSimilarity {
             map
         }
         
+        def annotations = gdens.collect{it.clone()}  // clone annotations
+        
         // intersection set
         def inters = gdens[0].intersect(gdens[1])
         inters += nca
@@ -93,7 +95,7 @@ class FMBSimilarity {
         def suglm = gdens.collect{ new SugenoLambdaMeasure(it.values()) }
         
         double similarity = sugenoSum(inters.values() as List, suglm[0], suglm[1])
-        appendToLog(a1.product, a2.product, gdens, nca, similarity)
+        appendToLog(a1.product, a2.product, annotations, nca, similarity)
         
         return similarity
     }

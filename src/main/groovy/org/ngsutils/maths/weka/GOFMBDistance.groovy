@@ -33,10 +33,10 @@ class GOFMBDistance implements DistanceFunction {
     /**
      * 
      */ 
-    public GOFMBDistance(GOManager gom, annotation, _logFile=null) {
-        if(_logFile!=null) {
+    public GOFMBDistance(GOManager gom, annotation, logFilePath=null) {
+        if(logFilePath!=null) {
             logObjectList = []
-            logFile = new File(_logFile)
+            logFile = new File(logFilePath)
         }
         
         similarity = logFile ? new FMBSimilarity(logObjectList: logObjectList) : new FMBSimilarity()

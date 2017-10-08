@@ -123,6 +123,7 @@ class GOClusterer {
         DistanceFunction distFunc = new GOFMBDistance(goManager, annotationMap, new File(workDir, 'distances.log').path)
         clusterer.distances = KernelFactory.calcDistMatrix(dataset, distFunc)
         printDistances(data.sort(), clusterer.distances)
+        distFunc.endLog()
         
         clusterer.buildClusterer(dataset)
     }
