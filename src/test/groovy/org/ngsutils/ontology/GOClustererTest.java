@@ -64,6 +64,8 @@ public class GOClustererTest {
         namespaces.add("molecular_function");
         namespaces.add("biological_process");
         
-        GOClusterer clusterer = new GOClusterer(workDir, "9606", data, namespaces);
+        //String [] options = new String [] {"-C","3","-lambda","1","-gamma","2","-K","0","-stdev","1"};
+        String [] options = null;
+        GOClusterer clusterer = new GOClusterer(workDir, "9606", data, namespaces, options);
     }
 }

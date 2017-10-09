@@ -37,6 +37,7 @@ abstract class AbstractFuzzyClusterer extends AbstractClusterer implements Numbe
     abstract protected void update();
     abstract protected void setup();
     abstract protected double sqDistToCentroid(int patt, int clust);
+    abstract public double distance(Instance a, Instance b);
     
     /**
      * 

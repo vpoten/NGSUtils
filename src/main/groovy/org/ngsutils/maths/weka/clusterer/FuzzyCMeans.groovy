@@ -100,4 +100,11 @@ class FuzzyCMeans extends AbstractFuzzyClusterer {
         double val = distFunc.distance(instances[patt], centroids[clust])
         return val*val
     }
+    
+    /**
+     *
+     */
+    public double distance(Instance a, Instance b) {
+        // TODO
+    }
 }

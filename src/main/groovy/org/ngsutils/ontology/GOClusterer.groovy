@@ -77,8 +77,9 @@ class GOClusterer {
      * @param workDir
      * @param taxId : taxonomy id; i.e. 9606
      * @param data: list with genes
+     * @param options: clusterer options (weka format)
      */
-    public GOClusterer(String workDir, String taxId, data, namespaces) {
+    public GOClusterer(String workDir, String taxId, data, namespaces, options) {
         def dataset = GOClusterer.createInstances(data)
         
         // load semantic data
@@ -119,6 +120,10 @@ class GOClusterer {
         
         // create clusterer class
         clusterer = CentralClustererUtils.buildClusterer(CentralClustererUtils.CLUST_KFCM)
+        
+        if( options ){
+            clusterer.setOptions(options as String[])
+        }
         
         DistanceFunction distFunc = new GOFMBDistance(goManager, annotationMap, new File(workDir, 'similarities.log.json').path)
         clusterer.distances = KernelFactory.calcDistMatrix(dataset, distFunc)

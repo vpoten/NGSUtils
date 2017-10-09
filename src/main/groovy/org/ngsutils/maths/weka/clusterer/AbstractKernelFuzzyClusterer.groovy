@@ -8,6 +8,7 @@ package org.ngsutils.maths.weka.clusterer
 
 import weka.core.matrix.Matrix
 import org.ngsutils.maths.KernelUtils
+import weka.core.Instance
 import weka.core.Utils as WekaUtils
 
 /**
@@ -80,6 +81,13 @@ abstract class AbstractKernelFuzzyClusterer extends AbstractFuzzyClusterer {
     protected double sqDistToCentroid(int h, int i) {
         double ai = rowSumsInv[i]
         return (K.get(h,h) - 2.0d*ai*Z.get(i,h) + ai*ai*Z2.get(i,i))
+    }
+    
+    /**
+     *
+     */
+    public double distance(Instance a, Instance b) {
+        // TODO
     }
     
     /**
