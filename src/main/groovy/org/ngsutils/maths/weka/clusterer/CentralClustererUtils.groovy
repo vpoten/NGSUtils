@@ -89,7 +89,7 @@ class CentralClustererUtils {
         
         println "# of iterations: ${clusterer.iterations}"
         println eval.clusterResultsToString()
-        
+        return clusterer
     }
     
 }

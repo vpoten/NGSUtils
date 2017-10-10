@@ -20,13 +20,13 @@ import weka.core.Utils as WekaUtils
 abstract class AbstractFuzzyClusterer extends AbstractClusterer implements NumberOfClustersRequestable {
 	
     int numOfClusters = 2
-    double epsilon = 0.01d //convergence criterion
+    double epsilon = 0.01d // convergence criterion
     
     protected Matrix U = null
     protected Matrix Uprior = null
     
-    protected def instances = null //list of instances
-    protected Instances data
+    protected def instances = null // list of Instance objects
+    protected Instances data // the dataset
     
     long iterations
     
@@ -74,6 +74,17 @@ abstract class AbstractFuzzyClusterer extends AbstractClusterer implements Numbe
         return res
     }
     
+    /**
+     * 
+     * @return: array of array (instance indexes for each cluster)
+     */ 
+    public def getClustering() {
+        return (0..numberOfClusters()-1).collect{ clIdx->
+            (0..instances.size()-1).findAll{ idx->
+                clIdx == (0..numberOfClusters()-1).max{U.get(it,idx)}
+            }
+        }
+    }
     
     /**
      * 

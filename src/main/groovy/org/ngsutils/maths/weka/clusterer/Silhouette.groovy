@@ -14,6 +14,13 @@ class Silhouette {
     
     public Silhouette(AbstractFuzzyClusterer clusterer) {
         // TODO
+        def clustering = clusterer.getClustering()
+        print "Hello"
+        // calc coefficient for each point
+        
+        // calc average coefficient for each cluster
+        
+        // calc overall coefficient (average of all points)
     }	
 }
 

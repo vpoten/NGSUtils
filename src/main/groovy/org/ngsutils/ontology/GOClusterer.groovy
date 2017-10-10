@@ -27,6 +27,10 @@ import weka.core.Instances
  */
 class GOClusterer {
     AbstractKernelFuzzyClusterer clusterer
+    DistanceFunction distFunc
+    def distances
+    def dataset
+    private clusterType = CentralClustererUtils.CLUST_KPCM
     
 
 //    /**
@@ -77,10 +81,10 @@ class GOClusterer {
      * @param workDir
      * @param taxId : taxonomy id; i.e. 9606
      * @param data: list with genes
-     * @param options: clusterer options (weka format)
+     * @param namespaces: list with GO namespaces to include ("molecular_function", ...)
      */
-    public GOClusterer(String workDir, String taxId, data, namespaces, options) {
-        def dataset = GOClusterer.createInstances(data)
+    public GOClusterer(String workDir, String taxId, data, namespaces) {
+        dataset = GOClusterer.createInstances(data)
         
         // load semantic data
         def graph = LinkedLifeDataFactory.loadRepository(LinkedLifeDataFactory.LIST_BASIC_GO, [taxId], workDir)
@@ -118,21 +122,27 @@ class GOClusterer {
             }
         }
         
-        // create clusterer class
-        clusterer = CentralClustererUtils.buildClusterer(CentralClustererUtils.CLUST_KFCM)
-        
-        if( options ){
-            clusterer.setOptions(options as String[])
-        }
-        
-        DistanceFunction distFunc = new GOFMBDistance(goManager, annotationMap, new File(workDir, 'similarities.log.json').path)
-        clusterer.distances = KernelFactory.calcDistMatrix(dataset, distFunc)
-        printDistances(data.sort(), clusterer.distances)
+        distFunc = new GOFMBDistance(goManager, annotationMap, new File(workDir, 'similarities.log.json').path)
+        distances = KernelFactory.calcDistMatrix(dataset, distFunc)
         distFunc.endLog()
-        
+        //// printDistances(data.sort(), clusterer.distances)
+    }
+    
+    /**
+     * 
+     * @param options: clusterer options (weka format)
+     */ 
+    public void runClusterer(options) {
+        // create clusterer class
+        clusterer = CentralClustererUtils.buildClusterer(clusterType)
+        if(options) { clusterer.setOptions(options as String []) }
+        clusterer.distances = distances
         clusterer.buildClusterer(dataset)
     }
     
+    /**
+     * to debug distances calc
+     */ 
     private static void printDistances(labels, mat) {
         int n = mat.rowDimension
         
@@ -144,7 +154,8 @@ class GOClusterer {
     }
 
     /**
-     *
+     * create dataset on the fly; each feature (gene) is an attribute of the dataset and
+     * each pattern has a '1' for the attribute of its gene and '0' otherwise
      */
     private static Instances createInstances(data) {
         data = data.sort()

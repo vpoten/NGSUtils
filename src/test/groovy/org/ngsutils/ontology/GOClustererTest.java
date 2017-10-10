@@ -66,6 +66,8 @@ public class GOClustererTest {
         
         //String [] options = new String [] {"-C","3","-lambda","1","-gamma","2","-K","0","-stdev","1"};
         String [] options = null;
-        GOClusterer clusterer = new GOClusterer(workDir, "9606", data, namespaces, options);
+        GOClusterer clusterer = new GOClusterer(workDir, "9606", data, namespaces);
+        assertNotNull(clusterer.getDistances());
+        clusterer.runClusterer(options);
     }
 }

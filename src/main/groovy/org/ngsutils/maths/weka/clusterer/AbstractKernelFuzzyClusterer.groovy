@@ -87,7 +87,7 @@ abstract class AbstractKernelFuzzyClusterer extends AbstractFuzzyClusterer {
      *
      */
     public double distance(Instance a, Instance b) {
-        // TODO
+        return distances.get(findInstance(a), findInstance(b))
     }
     
     /**
