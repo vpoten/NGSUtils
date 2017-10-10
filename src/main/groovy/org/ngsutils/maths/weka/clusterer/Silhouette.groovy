@@ -12,13 +12,28 @@ package org.ngsutils.maths.weka.clusterer
  */
 class Silhouette {
     
+    double [] overallCoeff
+    double [] intraAvgDist
+    
+    
     public Silhouette(AbstractFuzzyClusterer clusterer) {
-        // TODO
         def clustering = clusterer.getClustering()
-        print "Hello"
-        // calc coefficient for each point
         
-        // calc average coefficient for each cluster
+        // calc intra cluster average distance for each point
+        intraAvgDist = new double [clusterer.numOfClusters]
+        
+        
+        for(cluster in clustering) {
+            def denom = 1.0/((double)cluster.size())
+            for(index in cluster) {
+                intraAvgDist[index] = denom * cluster.sum{clusterer.distanceByIndex(index, it)}
+            }
+        }
+        
+        // calc the minimun distance to points in other clusters
+        def minExtDist = new double [clusterer.numOfClusters]
+        // TODO
+        
         
         // calc overall coefficient (average of all points)
     }	

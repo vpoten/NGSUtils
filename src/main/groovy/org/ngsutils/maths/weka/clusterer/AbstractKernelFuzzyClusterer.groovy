@@ -91,6 +91,13 @@ abstract class AbstractKernelFuzzyClusterer extends AbstractFuzzyClusterer {
     }
     
     /**
+     *
+     */
+    public double distanceByIndex(int a, int b) {
+        return distances.get(a, b)
+    }
+    
+    /**
      * Clusterer options:
      * -K <integer> = type of kernel to use 0=linear, 1=gaussian (default 0)
      * -stdev <double> = gaussian kernel stdev (default 1)

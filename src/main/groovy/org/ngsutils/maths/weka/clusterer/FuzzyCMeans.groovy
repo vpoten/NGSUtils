@@ -107,4 +107,11 @@ class FuzzyCMeans extends AbstractFuzzyClusterer {
     public double distance(Instance a, Instance b) {
         return distFunc.distance(a, b)
     }
+    
+    /**
+     *
+     */
+    public double distanceByIndex(int a, int b) {
+        return distFunc.distance(instances[a], instances[b])
+    }
 }

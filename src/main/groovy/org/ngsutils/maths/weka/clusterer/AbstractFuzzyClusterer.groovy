@@ -38,7 +38,9 @@ abstract class AbstractFuzzyClusterer extends AbstractClusterer implements Numbe
     abstract protected void setup();
     abstract protected double sqDistToCentroid(int patt, int clust);
     abstract public double distance(Instance a, Instance b);
-    
+    abstract public double distanceByIndex(int a, int b);
+
+
     /**
      * 
      */
@@ -57,6 +59,12 @@ abstract class AbstractFuzzyClusterer extends AbstractClusterer implements Numbe
         this.numOfClusters = n;
     }
     
+    /**
+     * 
+     */
+    public int getNumInstances() {
+        return instances.size()
+    }
     
     /**
      * 
