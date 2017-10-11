@@ -42,7 +42,7 @@ public class SilhouetteTest {
         String file = "/home/victor/software/weka-3-6-9/data/iris.2D.arff";
         
         // create a 'good' cluster
-        String [] options = new String [] {"-C","3","-lambda","10","-gamma","0.01"};
+        String [] options = new String [] {"-C","3","-lambda","10","-gamma","0.01","-epsilon","0.001"};
         AbstractFuzzyClusterer clusterer =
                 (AbstractFuzzyClusterer) CentralClustererUtils.runClusterer(file, true, CentralClustererUtils.getCLUST_KPCM(), options);
         assertNotNull(clusterer);
@@ -50,7 +50,7 @@ public class SilhouetteTest {
         Silhouette scc1 = new Silhouette(clusterer);
                 
         // create a 'bad' cluster
-        options = new String [] {"-C","3","-lambda","8","-gamma","0.01"};
+        options = new String [] {"-C","3","-lambda","8","-gamma","0.01","-epsilon","0.001"};
         clusterer =
                 (AbstractFuzzyClusterer) CentralClustererUtils.runClusterer(file, true, CentralClustererUtils.getCLUST_KPCM(), options);
         
@@ -60,7 +60,7 @@ public class SilhouetteTest {
         assertTrue(scc1.getOverall() > scc2.getOverall());
         
         // create another 'bad' cluster
-        options = new String [] {"-C","3","-lambda","2","-gamma","0.01"};
+        options = new String [] {"-C","3","-lambda","2","-gamma","0.01","-epsilon","0.001"};
         clusterer =
                 (AbstractFuzzyClusterer) CentralClustererUtils.runClusterer(file, true, CentralClustererUtils.getCLUST_KPCM(), options);
         

@@ -16,7 +16,7 @@ class Silhouette {
     double [] intraAvgDist // intra cluster average distance
     double [] minAvgExtDist // minimun average distance to points in other clusters
     double overall
-    double [] clusterOverall
+    Double [] clusterOverall
     
     
     public Silhouette(AbstractFuzzyClusterer clusterer) {
@@ -36,7 +36,7 @@ class Silhouette {
                 intraAvgDist[index] = denom * cluster.sum{clusterer.distanceByIndex(index, it)}
                 
                 minAvgExtDist[index] = others.collect{ cluster2 ->
-                    if(cluster2.isEmpty()) {return 0.0d}
+                    if(cluster2.isEmpty()) {return Double.MAX_VALUE}
                     cluster2.sum{clusterer.distanceByIndex(index, it)} / ((double)cluster2.size())
                 }.min()
                 
@@ -49,8 +49,9 @@ class Silhouette {
         overall = (silhCoeff as List).sum() / ((double)clusterer.numInstances)
         
         clusterOverall = clustering.collect{ cluster ->
+            if(cluster.isEmpty()) {return null}
             cluster.sum{silhCoeff[it]} / ((double)cluster.size())
-        } as double []
+        } as Double []
     }	
 }
 
