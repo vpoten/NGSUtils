@@ -6,6 +6,7 @@
 package org.ngsutils.ontology;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -69,5 +70,10 @@ public class GOClustererTest {
         GOClusterer clusterer = new GOClusterer(workDir, "9606", data, namespaces);
         assertNotNull(clusterer.getDistances());
         clusterer.runClusterer(options);
+
+//        HashMap<String, String []> parameters = new HashMap<String, String []>();
+//        parameters.put("-C", new String [] {"3","4"});
+//        parameters.put("-lambda", new String [] {"1","2","5"});
+//        GOClusterer.gridSearch(null, parameters, true);
     }
 }

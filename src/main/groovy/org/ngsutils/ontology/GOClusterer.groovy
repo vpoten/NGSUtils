@@ -154,8 +154,9 @@ class GOClusterer {
     }
 
     /**
-     * create dataset on the fly; each feature (gene) is an attribute of the dataset and
-     * each pattern has a '1' for the attribute of its gene and '0' otherwise
+     * Create a dataset on the fly; each feature (gene) is an attribute of the dataset and
+     * each pattern has a '1' for the attribute of its gene and '0' otherwise.
+     * The generated dataset is valid for clustering of single gene patterns.
      */
     private static Instances createInstances(data) {
         data = data.sort()
@@ -182,5 +183,57 @@ class GOClusterer {
         }
         
         return dataset
+    }
+    
+    /**
+     *
+     */
+    public static gridSearch(clusterer, Map parameters, debug=false) {
+        // default values for options:
+        // ["-C","3","-lambda","2","-gamma","1","-K","0","-stdev","1.0"]
+        def optionsValues = [
+            '-C': (parameters['-C'] ?: ['3']),
+            '-lambda': (parameters['-lambda'] ?: ['2']),
+            '-gamma': (parameters['-gamma'] ?: ['1']),
+            '-K': (parameters['-K'] ?: ['0']),
+            '-stdev': (parameters['-stdev'] ?: ['1.0']),
+        ]
+        
+        def optionsList = null
+        def optionKeys = ['-C', '-lambda', '-gamma', '-K', '-stdev']
+        
+        // generate all variations of options
+        for(key in optionKeys) {
+            if( optionsList==null ) {
+                optionsList = optionsValues[key].collect{[it]}
+            }
+            else {
+                def newOptions = []
+                for(options in optionsList) {
+                    newOptions += optionsValues[key].collect{options + it}
+                }
+                optionsList = newOptions
+            }
+        }
+        
+        def bestOptions = null
+        double bestCoeff = -1.0d
+        
+        for(options in optionsList) {
+            def wekaOpts = []
+            optionKeys.eachWithIndex{k, i-> wekaOpts += [k, options[i]]}
+            
+            clusterer.runClusterer(wekaOpts)
+            def silCoeff = Silhouette(clusterer)
+            
+            if( silCoeff.overall > bestCoeff ) {
+                bestCoeff = silCoeff.overall
+                bestOptions = options
+            }
+            
+            // TODO print clustering performance if debug==true
+        }
+        
+        return bestOptions
     }
 }
