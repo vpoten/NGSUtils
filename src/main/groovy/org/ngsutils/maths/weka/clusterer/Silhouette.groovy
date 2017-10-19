@@ -12,11 +12,11 @@ package org.ngsutils.maths.weka.clusterer
  */
 class Silhouette {
     
-    double [] silhCoeff
-    double [] intraAvgDist // intra cluster average distance
-    double [] minAvgExtDist // minimun average distance to points in other clusters
-    double overall
-    Double [] clusterOverall
+    final double [] silhCoeff
+    final double [] intraAvgDist // intra cluster average distance
+    final double [] minAvgExtDist // minimun average distance to points in other clusters
+    final double overall
+    final Double [] clusterOverall
     
     
     public Silhouette(AbstractFuzzyClusterer clusterer) {

@@ -66,14 +66,14 @@ public class GOClustererTest {
         namespaces.add("biological_process");
         
         //String [] options = new String [] {"-C","3","-lambda","1","-gamma","2","-K","0","-stdev","1"};
-        String [] options = null;
         GOClusterer clusterer = new GOClusterer(workDir, "9606", data, namespaces);
         assertNotNull(clusterer.getDistances());
-        clusterer.runClusterer(options);
+        //clusterer.runClusterer(null);
 
-//        HashMap<String, String []> parameters = new HashMap<String, String []>();
-//        parameters.put("-C", new String [] {"3","4"});
-//        parameters.put("-lambda", new String [] {"1","2","5"});
-//        GOClusterer.gridSearch(null, parameters, 1, true);
+        HashMap<String, String []> parameters = new HashMap<String, String []>();
+        parameters.put("-C", new String [] {"3","4","5"});
+        parameters.put("-lambda", new String [] {"1","2","5"});
+        parameters.put("-epsilon", new String [] {"1e-3"});
+        GOClusterer.gridSearch(clusterer, parameters, 3, true);
     }
 }

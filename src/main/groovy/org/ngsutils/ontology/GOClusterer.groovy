@@ -11,6 +11,7 @@ import org.ngsutils.maths.weka.KernelFactory
 import org.ngsutils.maths.weka.GOFMBDistance
 import org.ngsutils.maths.weka.clusterer.AbstractKernelFuzzyClusterer
 import org.ngsutils.maths.weka.clusterer.CentralClustererUtils
+import org.ngsutils.maths.weka.clusterer.Silhouette
 import org.ngsutils.semantic.query.GOQueryUtils
 import org.ngsutils.semantic.query.GeneQueryUtils
 import org.ngsutils.semantic.rdfutils.SimpleGraph
@@ -188,7 +189,7 @@ class GOClusterer {
     /**
      *
      */
-    public static gridSearch(clusterer, Map parameters, int numExecs, debug=false) {
+    public static gridSearch(goClusterer, Map parameters, int numExecs, debug=false) {
         // default values for options:
         // ["-C","3","-lambda","2","-gamma","1","-K","0","-stdev","1.0"]
         def optionsValues = [
@@ -232,21 +233,25 @@ class GOClusterer {
             
             // do several executions with the same parameters
             def silCoeffs = (1..numExecs).collect{
-                clusterer.runClusterer(wekaOpts)
-                return Silhouette(clusterer)
+                goClusterer.runClusterer(wekaOpts)
+                new Silhouette(goClusterer.clusterer)
             }
             
             // get best result
             def silCoeff = silCoeffs.max{it.overall}
-            
-            // TODO print max, min, avh of silCoeff
+            def coeffs = silCoeffs.collect{it.overall}
             
             if( silCoeff.overall > bestCoeff ) {
                 bestCoeff = silCoeff.overall
                 bestOptions = options
             }
             
-            // TODO print clustering performance if debug==true
+            // print clustering performance if debug==true
+            if(debug) {
+                println wekaOpts
+                // print max, min, avg of silhouett coeff.
+                println "Silhouette: Max=${coeffs.max()} Min=${coeffs.min()} Avg=${coeffs.sum()/(double)numExecs}"
+            }
         }
         
         return bestOptions
