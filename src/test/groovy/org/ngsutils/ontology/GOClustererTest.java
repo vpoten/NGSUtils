@@ -74,6 +74,6 @@ public class GOClustererTest {
 //        HashMap<String, String []> parameters = new HashMap<String, String []>();
 //        parameters.put("-C", new String [] {"3","4"});
 //        parameters.put("-lambda", new String [] {"1","2","5"});
-//        GOClusterer.gridSearch(null, parameters, true);
+//        GOClusterer.gridSearch(null, parameters, 1, true);
     }
 }

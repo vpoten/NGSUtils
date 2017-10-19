@@ -188,7 +188,7 @@ class GOClusterer {
     /**
      *
      */
-    public static gridSearch(clusterer, Map parameters, debug=false) {
+    public static gridSearch(clusterer, Map parameters, int numExecs, debug=false) {
         // default values for options:
         // ["-C","3","-lambda","2","-gamma","1","-K","0","-stdev","1.0"]
         def optionsValues = [
@@ -223,8 +223,23 @@ class GOClusterer {
             def wekaOpts = []
             optionKeys.eachWithIndex{k, i-> wekaOpts += [k, options[i]]}
             
-            clusterer.runClusterer(wekaOpts)
-            def silCoeff = Silhouette(clusterer)
+            // add max iterations (-I) and epsilon (-epsilon) to weka options
+            ['-I', '-epsilon'].each{
+                if(it in parameters) {
+                    wekaOpts += [it, parameters[it][0]]
+                }
+            }
+            
+            // do several executions with the same parameters
+            def silCoeffs = (1..numExecs).collect{
+                clusterer.runClusterer(wekaOpts)
+                return Silhouette(clusterer)
+            }
+            
+            // get best result
+            def silCoeff = silCoeffs.max{it.overall}
+            
+            // TODO print max, min, avh of silCoeff
             
             if( silCoeff.overall > bestCoeff ) {
                 bestCoeff = silCoeff.overall
