@@ -275,7 +275,7 @@ abstract class AbstractFuzzyClusterer extends AbstractClusterer implements Numbe
     /**
      * Clusterer options:
      * -lambda <double> = FCM entropy parameter (default 2)
-     * -gamma <double> = PCM entropy parameter (default 1)
+     * -gamma <double> = PCM entropy parameter (default 1), for PCM clusterer only
      * -I <integer> = max. iterations
      * -epsilon <double> = convergence criterion (default 0.01)
      * -C <integer> = number of clusters 
