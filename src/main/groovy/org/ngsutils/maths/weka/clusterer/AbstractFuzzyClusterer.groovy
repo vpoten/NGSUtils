@@ -284,9 +284,6 @@ abstract class AbstractFuzzyClusterer extends AbstractClusterer implements Numbe
         def opt = WekaUtils.getOption('lambda',options)
         if( opt ){ this.lambda = opt as Double }
         
-        opt = WekaUtils.getOption('gamma',options)
-        if( opt ){ this.gamma = opt as Double }
-        
         opt = WekaUtils.getOption('I',options)
         if( opt ){ this.maxIterations = opt as Long }
         

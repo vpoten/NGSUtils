@@ -42,5 +42,15 @@ class PossibilisticCMeans extends FuzzyCMeans {
         updateCentroids()
         updateMembershipsEPCM(etas)
     }
+    
+    /**
+     * Clusterer options:
+     * -gamma <double> = PCM entropy parameter (default 1)
+     */
+    public void setOptions (String[] options) {
+        opt = WekaUtils.getOption('gamma',options)
+        if( opt ){ this.gamma = opt as Double }
+        super.setOptions(options)
+    }
 }
 

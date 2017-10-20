@@ -31,7 +31,7 @@ class GOClusterer {
     DistanceFunction distFunc
     def distances
     def dataset
-    private clusterType = CentralClustererUtils.CLUST_KPCM
+    private clusterType = CentralClustererUtils.CLUST_KFCM
     
 
 //    /**
