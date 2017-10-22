@@ -29,19 +29,29 @@ class Silhouette {
         minAvgExtDist = new double [clusterer.numInstances]
         
         for(cluster in clustering) {
-            def denom = 1.0/((double)cluster.size())
+            def denom = 1.0/((double)cluster.size()-1)
             def others = clustering.findAll{it != cluster}
             
             for(index in cluster) {
-                intraAvgDist[index] = denom * cluster.sum{clusterer.distanceByIndex(index, it)}
+                if( cluster.size()==1 ) {
+                    intraAvgDist[index] = Double.NaN
+                }
+                else {
+                    intraAvgDist[index] = denom * cluster.sum{clusterer.distanceByIndex(index, it)}
+                }
                 
                 minAvgExtDist[index] = others.collect{ cluster2 ->
                     if(cluster2.isEmpty()) {return Double.MAX_VALUE}
                     cluster2.sum{clusterer.distanceByIndex(index, it)} / ((double)cluster2.size())
                 }.min()
                 
-                silhCoeff[index] = (minAvgExtDist[index] - intraAvgDist[index]) /
-                    Math.max(minAvgExtDist[index], intraAvgDist[index])
+                if( cluster.size()==1 ) {
+                    silhCoeff[index] = -1.0d  // penalty for single instance cluster
+                }
+                else {
+                    silhCoeff[index] = (minAvgExtDist[index] - intraAvgDist[index]) /
+                        Math.max(minAvgExtDist[index], intraAvgDist[index])
+                }
             }
         }
         
