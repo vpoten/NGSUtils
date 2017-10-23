@@ -5,6 +5,7 @@
 
 package org.ngsutils.ontology;
 
+import org.ngsutils.Utils
 import org.ngsutils.AnnotationDB
 import org.ngsutils.semantic.LinkedLifeDataFactory
 import org.ngsutils.maths.weka.KernelFactory
@@ -15,6 +16,8 @@ import org.ngsutils.maths.weka.clusterer.Silhouette
 import org.ngsutils.semantic.query.GOQueryUtils
 import org.ngsutils.semantic.query.GeneQueryUtils
 import org.ngsutils.semantic.rdfutils.SimpleGraph
+import org.ngsutils.stats.BiNGO.BingoAlgorithm
+import org.ngsutils.stats.StatTestParams
 import org.openrdf.model.URI
 import weka.core.Attribute
 import weka.core.DistanceFunction
@@ -27,6 +30,9 @@ import weka.core.Instances
  * @author victor
  */
 class GOClusterer {
+    def graph  // semantic data
+    GOManager goManager  // GeneOntology manager
+    def taxonomyId
     AbstractKernelFuzzyClusterer clusterer
     DistanceFunction distFunc
     def distances
@@ -81,24 +87,20 @@ class GOClusterer {
      *
      * @param workDir
      * @param taxId : taxonomy id; i.e. 9606
-     * @param data: list with genes
+     * @param data: list with genes or map {label: group_genes}
      * @param namespaces: list with GO namespaces to include ("molecular_function", ...)
      */
     public GOClusterer(String workDir, String taxId, data, namespaces) {
-        dataset = GOClusterer.createInstances(data)
-        
         // load semantic data
-        def graph = LinkedLifeDataFactory.loadRepository(LinkedLifeDataFactory.LIST_BASIC_GO, [taxId], workDir)
+        loadSemanticData(workDir, taxId)
         
-        // get GOA file
-        def urlSrc = AnnotationDB.goAssocUrl(taxId)
-        def name = urlSrc.substring( urlSrc.lastIndexOf('/')+1 )
-        def goaFile = "${workDir}${taxId}/${name}"
-        
-        // create GO manager
-        GOManager goManager = new GOManager( graph )
-        goManager.calculateProbTerms(goaFile)
-        goManager.setEcodeFactors( GOEvidenceCodes.ecodeFactorsSet1 )
+        if (data instanceof List) {
+            dataset = GOClusterer.createInstances(data)
+            // TODO
+        }
+        else if(data instanceof Map) {
+            // TODO
+        }
         
         GOQueryUtils goQuery = new GOQueryUtils(graph)
         GeneQueryUtils geneQuery = new GeneQueryUtils(graph)
@@ -127,6 +129,25 @@ class GOClusterer {
         distances = KernelFactory.calcDistMatrix(dataset, distFunc)
         distFunc.endLog()
         //// printDistances(data.sort(), clusterer.distances)
+    }
+    
+    /**
+     * 
+     */ 
+    private loadSemanticData(String workDir, String taxId) {
+        taxonomyId = taxId
+        // load semantic data
+        graph = LinkedLifeDataFactory.loadRepository(LinkedLifeDataFactory.LIST_BASIC_GO, [taxonomyId], workDir)
+        
+        // get GOA file
+        def urlSrc = AnnotationDB.goAssocUrl(taxonomyId)
+        def name = urlSrc.substring( urlSrc.lastIndexOf('/')+1 )
+        def goaFile = "${workDir}${taxonomyId}/${name}"
+        
+        // create GO manager
+        goManager = new GOManager( graph )
+        goManager.calculateProbTerms(goaFile)
+        goManager.setEcodeFactors( GOEvidenceCodes.ecodeFactorsSet1 )
     }
     
     /**
@@ -256,4 +277,64 @@ class GOClusterer {
         
         return bestOptions
     }
+    
+    /**
+     *
+     */
+    public static readTSVGenesGroups(file, int genesField, boolean header = false) {
+        def groups = [:]
+        def reader = Utils.createReader(new File(file))
+        if( header ){ reader.readLine() }
+        
+        reader.splitEachLine("\t"){ toks->
+            groups[toks[0]] = toks[genesField].split(',')
+        }
+        
+        reader.close()
+        return groups
+    }
+    
+    /**
+     *
+     */
+    public calcEnrichment(geneGroups) {
+        def geneQuery = new GeneQueryUtils(graph)
+        
+        //prepare annotation
+        annotation = NGSDataResource.create(graph)
+        annotation.load(taxonomyId)
+        
+        def calcBingo = { featureSet ->
+            //prepare stats params
+            StatTestParams statParams = new StatTestParams()
+            statParams.annotation = annotation
+            statParams.taxonomyId = taxonomyId
+        
+            //translate features to genes URI
+            def genesAsURIs = 
+                featureSet.collect{ geneQuery.getGeneByName(it, taxonomyId)?.stringValue() }.findAll{ it!=null }
+            
+            statParams.annotation.selectedGenes = genesAsURIs
+
+            // call BiNGO for current set
+            return BingoAlgorithm.performCalculations(statParams)
+        }
+        
+        /*
+        def filterByNamespace = { BingoAlgorithm bingo, namespaces ->
+            bingo.correctionMap.findAll{ goManager.getNamespace(it.key) in namespaces }.keySet()
+        }
+        */
+        
+        //perform enrichment analysis for each set
+        def results = [:]
+        
+        geneGroups.each{ label, features->
+            BingoAlgorithm bingo = calcBingo(features)
+            results[label] = bingo
+        }
+        
+        return results
+    }
+    
 }
