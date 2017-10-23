@@ -33,6 +33,7 @@ class GOClusterer {
     def graph  // semantic data
     GOManager goManager  // GeneOntology manager
     def taxonomyId
+    def namespaces  // GeneOntology namespaces
     AbstractKernelFuzzyClusterer clusterer
     DistanceFunction distFunc
     def distances
@@ -90,40 +91,13 @@ class GOClusterer {
      * @param data: list with genes or map {label: group_genes}
      * @param namespaces: list with GO namespaces to include ("molecular_function", ...)
      */
-    public GOClusterer(String workDir, String taxId, data, namespaces) {
+    public GOClusterer(String workDir, String taxId, data, _namespaces) {
         // load semantic data
         loadSemanticData(workDir, taxId)
-        
-        if (data instanceof List) {
-            dataset = GOClusterer.createInstances(data)
-            // TODO
-        }
-        else if(data instanceof Map) {
-            // TODO
-        }
-        
-        GOQueryUtils goQuery = new GOQueryUtils(graph)
-        GeneQueryUtils geneQuery = new GeneQueryUtils(graph)
-        def annotationMap = [:] as TreeMap
-        
-        // create annotation map using attribute names (genes)
-        int classIdx = dataset.classIndex()
-        
-        (0..dataset.numAttributes()-1).each{ i ->
-            def att = dataset.attribute(i)
-            if (i != classIdx) {
-                def label = att.name()
-                def uri = geneQuery.getGeneByName(label)
-                def terms = goQuery.getTerms(uri)
-                
-                // filter terms in namespaces
-                terms = terms.findAll{goManager.getNamespace(it) in namespaces}
-                
-                //create annotation
-                def annot = new OntologyAnnotation(product:label, terms:(terms ?: [] as Set))
-                annotationMap[label] = annot
-            }
-        }
+        namespaces = _namespaces
+        dataset = GOClusterer.createInstances((data instanceof List) ? data : data.keySet())
+      
+        def annotationMap = (data instanceof List) ? buildSingleGeneAnnotation() : buildGroupGeneAnnotation(data)
         
         distFunc = new GOFMBDistance(goManager, annotationMap, new File(workDir, 'similarities.log.json').path)
         distances = KernelFactory.calcDistMatrix(dataset, distFunc)
@@ -148,6 +122,63 @@ class GOClusterer {
         goManager = new GOManager( graph )
         goManager.calculateProbTerms(goaFile)
         goManager.setEcodeFactors( GOEvidenceCodes.ecodeFactorsSet1 )
+    }
+    
+    /**
+     * 
+     * create annotation map using attribute names (genes)
+     */
+    private buildSingleGeneAnnotation() {
+        GOQueryUtils goQuery = new GOQueryUtils(graph)
+        GeneQueryUtils geneQuery = new GeneQueryUtils(graph)
+        def annotationMap = [:] as TreeMap
+        
+        int classIdx = dataset.classIndex()
+        
+        (0..dataset.numAttributes()-1).each{ i ->
+            def att = dataset.attribute(i)
+            if (i != classIdx) {
+                def label = att.name()
+                def uri = geneQuery.getGeneByName(label)
+                def terms = goQuery.getTerms(uri)
+                
+                // filter terms in namespaces
+                terms = terms.findAll{goManager.getNamespace(it) in namespaces}
+                
+                //create annotation
+                def annot = new OntologyAnnotation(product:label, terms:(terms ?: [] as Set))
+                annotationMap[label] = annot
+            }
+        }
+        
+        return annotationMap
+    }
+    
+    /**
+     * 
+     */ 
+    private buildGroupGeneAnnotation(geneGroups) {
+        def enrichments = calcEnrichment(geneGroups)
+        def annotationMap = [:] as TreeMap
+        
+        int classIdx = dataset.classIndex()
+        
+        (0..dataset.numAttributes()-1).each{ i ->
+            def att = dataset.attribute(i)
+            if (i != classIdx) {
+                def label = att.name()
+                def terms = enrichments[label].keySet()
+                
+                // filter terms in namespaces
+                terms = terms.findAll{goManager.getNamespace(it) in namespaces}
+                
+                //create annotation
+                def annot = new OntologyAnnotation(product:label, terms:(terms ?: [] as Set))
+                annotationMap[label] = annot
+            }
+        }
+        
+        return annotationMap
     }
     
     /**
