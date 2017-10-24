@@ -268,17 +268,22 @@ public class GOManager {
 
     /**
      * get evidence code for a pair gene-term annotation
+     * 
+     * @param gene: gene or list of genes/features
      */
-    public String getECode(String gene, term) {
-        ecodes[geneGoKey(gene, goTermStr(term))]
+    public List getECode(gene, term) {
+        def features = (gene instanceof String) ? [gene] : gene
+        def ecodes = features.collect{ ecodes[geneGoKey(it, goTermStr(term))] }.findAll{ it!=null }
     }
     
     /**
      * get evidence code importance for a pair gene-term annotation
+     * 
+     * @param gene: gene or list of genes/features
      */
-    public Double getEvidence(String gene, term) {
-        def ecode = ecodes[geneGoKey(gene, goTermStr(term))]
-        (ecode) ? ecodeFactors[ecode] : null
+    public Double getEvidence(gene, term) {
+        def ecodes = getECode(gene, term)
+        return ecodes.collect{ ecodeFactors[it] }.min()
     }
     
     /**
@@ -360,14 +365,13 @@ public class GOManager {
     
     /**
      * 
-     * @param gene : a gene or feature
+     * @param gene : a gene or feature or collection of features
      * @param term : a go term
      */
     public Double getImportance(gene, term){
-        String goterm = goTermStr(term)
-        Double ic = icontent[goterm]
-        String ecode = ecodes[geneGoKey(gene,goterm)]
-        double factor = ecodeFactors[ecode]
+        Double ic = icontent[goTermStr(term)]
+        def ecodes = getECode(gene, term)
+        double factor = ecodes.collect{ ecodeFactors[it] }.min()
         return ic*factor
     }
 

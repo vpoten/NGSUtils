@@ -13,6 +13,7 @@ import org.ngsutils.maths.weka.GOFMBDistance
 import org.ngsutils.maths.weka.clusterer.AbstractKernelFuzzyClusterer
 import org.ngsutils.maths.weka.clusterer.CentralClustererUtils
 import org.ngsutils.maths.weka.clusterer.Silhouette
+import org.ngsutils.semantic.NGSDataResource
 import org.ngsutils.semantic.query.GOQueryUtils
 import org.ngsutils.semantic.query.GeneQueryUtils
 import org.ngsutils.semantic.rdfutils.SimpleGraph
@@ -146,7 +147,8 @@ class GOClusterer {
                 terms = terms.findAll{goManager.getNamespace(it) in namespaces}
                 
                 //create annotation
-                def annot = new OntologyAnnotation(product:label, terms:(terms ?: [] as Set))
+                def annot = new OntologyAnnotation(id: label, product:label,
+                    terms:(terms ?: [] as Set))
                 annotationMap[label] = annot
             }
         }
@@ -167,13 +169,14 @@ class GOClusterer {
             def att = dataset.attribute(i)
             if (i != classIdx) {
                 def label = att.name()
-                def terms = enrichments[label].keySet()
+                def terms = enrichments[label].correctionMap.keySet()
                 
                 // filter terms in namespaces
                 terms = terms.findAll{goManager.getNamespace(it) in namespaces}
                 
                 //create annotation
-                def annot = new OntologyAnnotation(product:label, terms:(terms ?: [] as Set))
+                def annot = new OntologyAnnotation(id: label,
+                    product: geneGroups[label], terms:(terms ?: [] as Set))
                 annotationMap[label] = annot
             }
         }
@@ -312,13 +315,13 @@ class GOClusterer {
     /**
      *
      */
-    public static readTSVGenesGroups(file, int genesField, boolean header = false) {
+    public static readTSVGenesGroups(file, int idField, int genesField, boolean header = false) {
         def groups = [:]
         def reader = Utils.createReader(new File(file))
         if( header ){ reader.readLine() }
         
         reader.splitEachLine("\t"){ toks->
-            groups[toks[0]] = toks[genesField].split(',')
+            groups[toks[idField]] = toks[genesField].split(',')
         }
         
         reader.close()
@@ -332,7 +335,7 @@ class GOClusterer {
         def geneQuery = new GeneQueryUtils(graph)
         
         //prepare annotation
-        annotation = NGSDataResource.create(graph)
+        def annotation = NGSDataResource.create(graph)
         annotation.load(taxonomyId)
         
         def calcBingo = { featureSet ->

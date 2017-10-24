@@ -39,41 +39,63 @@ public class GOClustererTest {
     public void tearDown() {
     }
 
+//    @Test
+//    public void doGOClusterer() {
+//        String workDir = "/home/victor/Escritorio/tests_ngsengine/go_clusterer/";
+//        ArrayList<String> data = new ArrayList<String>();
+//        ArrayList<String> namespaces = new ArrayList<String>();
+//        
+//        // add some genes to data
+//        data.add("SP110");
+//        data.add("HLA-F");
+//        data.add("STAT5A");
+//        data.add("MMP10");
+//        data.add("HLA-DQB1");
+//        data.add("HLA-DQA1");
+//        data.add("SYK");
+//        data.add("GRHL3");
+//        data.add("TYMP");
+//        data.add("CD86");
+//        data.add("ODF3B");
+//        data.add("SLC15A3");
+//        data.add("MAF");
+//        data.add("ACP5");
+//        data.add("CEACAM19");
+//        
+//        namespaces.add("molecular_function");
+//        namespaces.add("biological_process");
+//        
+//        //String [] options = new String [] {"-C","3","-lambda","1","-gamma","2","-K","0","-stdev","1"};
+//        GOClusterer clusterer = new GOClusterer(workDir, "9606", data, namespaces);
+//        assertNotNull(clusterer.getDistances());
+//        //clusterer.runClusterer(null);
+//
+//        HashMap<String, String []> parameters = new HashMap<String, String []>();
+//        parameters.put("-C", new String [] {"3","4","5"});
+//        parameters.put("-lambda", new String [] {"1","2","5"});
+//        parameters.put("-epsilon", new String [] {"1e-3"});
+//        GOClusterer.gridSearch(clusterer, parameters, 3, true);
+//    }
+    
     @Test
-    public void doGOClusterer() {
+    public void doGOClusterer2() {
         String workDir = "/home/victor/Escritorio/tests_ngsengine/go_clusterer/";
-        ArrayList<String> data = new ArrayList<String>();
         ArrayList<String> namespaces = new ArrayList<String>();
-        
-        // add some genes to data
-        data.add("SP110");
-        data.add("HLA-F");
-        data.add("STAT5A");
-        data.add("MMP10");
-        data.add("HLA-DQB1");
-        data.add("HLA-DQA1");
-        data.add("SYK");
-        data.add("GRHL3");
-        data.add("TYMP");
-        data.add("CD86");
-        data.add("ODF3B");
-        data.add("SLC15A3");
-        data.add("MAF");
-        data.add("ACP5");
-        data.add("CEACAM19");
         
         namespaces.add("molecular_function");
         namespaces.add("biological_process");
         
-        //String [] options = new String [] {"-C","3","-lambda","1","-gamma","2","-K","0","-stdev","1"};
-        GOClusterer clusterer = new GOClusterer(workDir, "9606", data, namespaces);
+        String enrichrOut =
+                "/home/victor/Escritorio/Genotipado_Alternativo/colocalizacion/output_GSE50588/output_enrichr_100K.txt";
+        GOClusterer clusterer = new GOClusterer(workDir, "9606",
+                GOClusterer.readTSVGenesGroups(enrichrOut, 1, 9, false), namespaces);
         assertNotNull(clusterer.getDistances());
-        //clusterer.runClusterer(null);
+        clusterer.runClusterer(null);
 
-        HashMap<String, String []> parameters = new HashMap<String, String []>();
-        parameters.put("-C", new String [] {"3","4","5"});
-        parameters.put("-lambda", new String [] {"1","2","5"});
-        parameters.put("-epsilon", new String [] {"1e-3"});
-        GOClusterer.gridSearch(clusterer, parameters, 3, true);
+//        HashMap<String, String []> parameters = new HashMap<String, String []>();
+//        parameters.put("-C", new String [] {"3","4","5"});
+//        parameters.put("-lambda", new String [] {"1","2","5"});
+//        parameters.put("-epsilon", new String [] {"1e-3"});
+//        GOClusterer.gridSearch(clusterer, parameters, 3, true);
     }
 }

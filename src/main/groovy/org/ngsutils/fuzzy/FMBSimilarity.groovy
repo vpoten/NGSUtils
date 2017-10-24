@@ -95,7 +95,7 @@ class FMBSimilarity {
         def suglm = gdens.collect{ new SugenoLambdaMeasure(it.values()) }
         
         double similarity = sugenoSum(inters.values() as List, suglm[0], suglm[1])
-        appendToLog(a1.product, a2.product, annotations, nca, similarity)
+        appendToLog(a1.id, a2.id, annotations, nca, similarity)
         
         return similarity
     }

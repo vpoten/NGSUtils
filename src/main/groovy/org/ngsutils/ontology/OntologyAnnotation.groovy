@@ -12,8 +12,8 @@ package org.ngsutils.ontology
  * @author victor
  */
 class OntologyAnnotation {
-	
-    def product // gene or feature (usually gene symbol)
+    def id
+    def product // gene or feature (usually gene symbol) or list of feature
     def terms // a collection of terms
 }
 

@@ -210,11 +210,11 @@ public class GOManagerTest {
     public void testSetEvidenceCodes(){
         System.out.println("setEvidenceCodes");
         
-        String result = instance.getECode("RAC2","GO:0003924");
-        assertEquals(result, "IEA");
+        List<String> result = instance.getECode("RAC2","GO:0003924");
+        assertEquals(result.get(0), "IEA");
         
         result = instance.getECode("EIF4G1","GO:0005515");
-        assertEquals(result, "IPI");
+        assertEquals(result.get(0), "IPI");
     }
     
     @Test
