@@ -164,6 +164,7 @@ class GOClusterer {
         def annotationMap = [:] as TreeMap
         
         int classIdx = dataset.classIndex()
+        def ontology = new FMBGOntologyWrap(goManager: goManager)
         
         (0..dataset.numAttributes()-1).each{ i ->
             def att = dataset.attribute(i)
@@ -173,6 +174,10 @@ class GOClusterer {
                 
                 // filter terms in namespaces
                 terms = terms.findAll{goManager.getNamespace(it) in namespaces}
+                
+                // remove redundant terms
+                def redundant = terms.findAll{ontology.isAncestor(it, terms)}
+                redundant.each{terms.remove(it)}
                 
                 //create annotation
                 def annot = new OntologyAnnotation(id: label,
@@ -341,6 +346,7 @@ class GOClusterer {
         def calcBingo = { featureSet ->
             //prepare stats params
             StatTestParams statParams = new StatTestParams()
+            statParams.significance = 0.025
             statParams.annotation = annotation
             statParams.taxonomyId = taxonomyId
         

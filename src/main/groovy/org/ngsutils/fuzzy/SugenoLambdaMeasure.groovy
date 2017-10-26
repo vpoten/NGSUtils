@@ -39,6 +39,11 @@ class SugenoLambdaMeasure {
         def roots = PolynomialRootFinder.findRoots(current.coefficients)
 
         double zero = NEAR_ZERO
+        def rootFilter = {val-> val.getReal()>-1.0d && Math.abs(val.getImaginary())<0.1}
+        // filter and sort by imaginary part
+        def sortedByImag = (roots as List).findAll(rootFilter).sort{ Math.abs(it.getImaginary()) }
+        def sortedByReal = (roots as List).findAll(rootFilter).sort{ it.getReal() }
+        
         while(lambda==null) {
             lambda = (roots as List).find{it.isReal() && it.getReal()>-1.0d && Math.abs(it.getReal())>zero}?.getReal()
             zero *= 0.1d
