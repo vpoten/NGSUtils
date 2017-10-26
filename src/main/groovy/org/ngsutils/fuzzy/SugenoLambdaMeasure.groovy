@@ -6,6 +6,7 @@
 package org.ngsutils.fuzzy
 
 import org.apache.commons.math3.analysis.polynomials.PolynomialFunction
+import org.apache.commons.math3.analysis.solvers.LaguerreSolver 
 import org.ngsutils.maths.PolynomialRootFinder
 
 
@@ -16,6 +17,7 @@ import org.ngsutils.maths.PolynomialRootFinder
 class SugenoLambdaMeasure {
 	
     static final double NEAR_ZERO = 1.0e-9
+    static final int MAX_EVAL = 1000000
     
     //polynomial constants
     static final def polyOne = new PolynomialFunction([1] as double[])
@@ -44,10 +46,31 @@ class SugenoLambdaMeasure {
         def sortedByImag = (roots as List).findAll(rootFilter).sort{ Math.abs(it.getImaginary()) }
         def sortedByReal = (roots as List).findAll(rootFilter).sort{ it.getReal() }
         
+        laguerreSolver(current)
+        
         while(lambda==null) {
             lambda = (roots as List).find{it.isReal() && it.getReal()>-1.0d && Math.abs(it.getReal())>zero}?.getReal()
             zero *= 0.1d
         }
+    }
+    
+    protected laguerreSolver(PolynomialFunction f) {
+        def solver = new LaguerreSolver()
+        def roots = null
+        
+        try {
+            roots = solver.solveAllComplex(f.coefficients, 0.0d, SugenoLambdaMeasure.MAX_EVAL)
+        }
+        catch(e) {
+            return null
+        }
+        
+        def rootFilter = {val-> val.getReal()>-1.0d && Math.abs(val.getImaginary())<0.1}
+        // filter and sort by imaginary part
+        def sortedByImag = (roots as List).findAll(rootFilter).sort{ Math.abs(it.getImaginary()) }
+        def sortedByReal = (roots as List).findAll(rootFilter).sort{ it.getReal() }
+        
+        return roots
     }
     
     /**
