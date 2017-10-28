@@ -6,7 +6,8 @@
 package org.ngsutils.fuzzy
 
 import org.apache.commons.math3.analysis.polynomials.PolynomialFunction
-import org.apache.commons.math3.analysis.solvers.LaguerreSolver 
+import org.apache.commons.math3.analysis.solvers.LaguerreSolver
+import org.apache.commons.math3.exception.TooManyEvaluationsException
 import org.ngsutils.maths.PolynomialRootFinder
 
 
@@ -16,7 +17,7 @@ import org.ngsutils.maths.PolynomialRootFinder
  */
 class SugenoLambdaMeasure {
 	
-    static final double NEAR_ZERO = 1.0e-9
+    static final double NEAR_ZERO = 1e-9
     static final int MAX_EVAL = 1000000
     
     //polynomial constants
@@ -40,37 +41,46 @@ class SugenoLambdaMeasure {
         
         def roots = PolynomialRootFinder.findRoots(current.coefficients)
 
-        double zero = NEAR_ZERO
-        def rootFilter = {val-> val.getReal()>-1.0d && Math.abs(val.getImaginary())<0.1}
-        // filter and sort by imaginary part
-        def sortedByImag = (roots as List).findAll(rootFilter).sort{ Math.abs(it.getImaginary()) }
-        def sortedByReal = (roots as List).findAll(rootFilter).sort{ it.getReal() }
+        lambda = (roots as List).find{it.isReal() && it.getReal()>-1.0d && Math.abs(it.getReal())>NEAR_ZERO}?.getReal()
         
-        laguerreSolver(current)
-        
-        while(lambda==null) {
-            lambda = (roots as List).find{it.isReal() && it.getReal()>-1.0d && Math.abs(it.getReal())>zero}?.getReal()
-            zero *= 0.1d
+        if(lambda==null) {
+            lambda = laguerreSolver(current)
         }
     }
     
     protected laguerreSolver(PolynomialFunction f) {
         def solver = new LaguerreSolver()
-        def roots = null
+        Double root = null
+        
+        def hasDiffSigns = { a, b->
+            (f.value(a) * f.value(b)) < 0.0d
+        }
         
         try {
-            roots = solver.solveAllComplex(f.coefficients, 0.0d, SugenoLambdaMeasure.MAX_EVAL)
+            if( hasDiffSigns(-1.0d, -NEAR_ZERO) ) {
+                root = solver.solve(SugenoLambdaMeasure.MAX_EVAL, f, -1.0d, -NEAR_ZERO)
+            }
+            else {
+                double upper = 1.0d
+                int evals = 0
+                
+                while(!hasDiffSigns(NEAR_ZERO, upper) && evals < SugenoLambdaMeasure.MAX_EVAL) {
+                    upper += 100.0d
+                    evals++
+                }
+                
+                if( evals==SugenoLambdaMeasure.MAX_EVAL ){
+                    return null
+                }
+                
+                root = solver.solve(SugenoLambdaMeasure.MAX_EVAL, f, NEAR_ZERO, upper)
+            }
         }
-        catch(e) {
-            return null
+        catch(TooManyEvaluationsException e) {
+            root = null
         }
         
-        def rootFilter = {val-> val.getReal()>-1.0d && Math.abs(val.getImaginary())<0.1}
-        // filter and sort by imaginary part
-        def sortedByImag = (roots as List).findAll(rootFilter).sort{ Math.abs(it.getImaginary()) }
-        def sortedByReal = (roots as List).findAll(rootFilter).sort{ it.getReal() }
-        
-        return roots
+        return root
     }
     
     /**
