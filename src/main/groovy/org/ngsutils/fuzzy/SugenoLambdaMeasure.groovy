@@ -17,7 +17,7 @@ import org.ngsutils.maths.PolynomialRootFinder
  */
 class SugenoLambdaMeasure {
 	
-    static final double NEAR_ZERO = 1e-9
+    static final double NEAR_ZERO = 1e-12
     static final int MAX_EVAL = 1000000
     
     //polynomial constants
@@ -65,7 +65,7 @@ class SugenoLambdaMeasure {
                 int evals = 0
                 
                 while(!hasDiffSigns(NEAR_ZERO, upper) && evals < SugenoLambdaMeasure.MAX_EVAL) {
-                    upper += 100.0d
+                    upper += 10.0d
                     evals++
                 }
                 
