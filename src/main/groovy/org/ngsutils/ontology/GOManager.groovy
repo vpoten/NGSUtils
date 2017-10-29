@@ -273,7 +273,8 @@ public class GOManager {
      */
     public List getECode(gene, term) {
         def features = (gene instanceof String) ? [gene] : gene
-        def ecodes = features.collect{ ecodes[geneGoKey(it, goTermStr(term))] }.findAll{ it!=null }
+        def goStr = goTermStr(term)
+        def ecodes = features.collect{ ecodes[geneGoKey(it, goStr)] }.findAll{ it!=null }
     }
     
     /**

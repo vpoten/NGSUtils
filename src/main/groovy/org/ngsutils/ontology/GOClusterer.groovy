@@ -179,6 +179,9 @@ class GOClusterer {
                 def redundant = terms.findAll{ontology.isAncestor(it, terms)}
                 redundant.each{terms.remove(it)}
                 
+                // limit the max number of term annotations per instance
+                terms = terms.sort{-ontology.getDensity(geneGroups[label], it)}.take(40)
+                
                 //create annotation
                 def annot = new OntologyAnnotation(id: label,
                     product: geneGroups[label], terms:(terms ?: [] as Set))
@@ -359,12 +362,6 @@ class GOClusterer {
             // call BiNGO for current set
             return BingoAlgorithm.performCalculations(statParams)
         }
-        
-        /*
-        def filterByNamespace = { BingoAlgorithm bingo, namespaces ->
-            bingo.correctionMap.findAll{ goManager.getNamespace(it.key) in namespaces }.keySet()
-        }
-        */
         
         //perform enrichment analysis for each set
         def results = [:]
