@@ -44,7 +44,8 @@ class SugenoLambdaMeasure {
         lambda = (roots as List).find{it.isReal() && it.getReal()>-1.0d && Math.abs(it.getReal())>NEAR_ZERO}?.getReal()
         
         if(lambda==null) {
-            lambda = laguerreSolver(current)
+            //// lambda = laguerreSolver(current)
+            lambda = 0.0d
         }
     }
     

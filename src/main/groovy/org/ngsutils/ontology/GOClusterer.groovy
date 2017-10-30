@@ -40,6 +40,8 @@ class GOClusterer {
     def distances
     def dataset
     private clusterType = CentralClustererUtils.CLUST_KFCM
+    private int maxTermsPerGroup = 50
+    private double enrichPVal = 0.01  // GO enrichment p-value threshold
     
 
 //    /**
@@ -180,7 +182,8 @@ class GOClusterer {
                 redundant.each{terms.remove(it)}
                 
                 // limit the max number of term annotations per instance
-                terms = terms.sort{-ontology.getDensity(geneGroups[label], it)}.take(40)
+                // sort by enrichment p-value
+                terms = terms.sort{enrichments[label].correctionMap[it]}.take(maxTermsPerGroup)
                 
                 //create annotation
                 def annot = new OntologyAnnotation(id: label,
@@ -349,7 +352,7 @@ class GOClusterer {
         def calcBingo = { featureSet ->
             //prepare stats params
             StatTestParams statParams = new StatTestParams()
-            statParams.significance = 0.025
+            statParams.significance = enrichPVal
             statParams.annotation = annotation
             statParams.taxonomyId = taxonomyId
         
