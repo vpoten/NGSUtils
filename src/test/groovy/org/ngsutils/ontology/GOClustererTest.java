@@ -5,6 +5,7 @@
  */
 package org.ngsutils.ontology;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import org.junit.After;
@@ -82,16 +83,22 @@ public class GOClustererTest {
         String workDir = "/home/victor/Escritorio/tests_ngsengine/go_clusterer/";
         ArrayList<String> namespaces = new ArrayList<String>();
         
+        String enrichrOut =
+                "/home/victor/Escritorio/Genotipado_Alternativo/colocalizacion/output_GSE50588/output_enrichr_100K.txt";
+        
         namespaces.add("molecular_function");
         namespaces.add("biological_process");
         
-        String enrichrOut =
-                "/home/victor/Escritorio/Genotipado_Alternativo/colocalizacion/output_GSE50588/output_enrichr_100K.txt";
         GOClustererData data = new GOClustererData(workDir, "9606");
-        GOClusterer clusterer = new GOClusterer(data, 
+         GOClusterer clusterer = new GOClusterer(data, 
                 GOClusterer.readTSVGenesGroups(enrichrOut, 1, 9, false), namespaces, 0.01);
         assertNotNull(clusterer.getDistances());
         clusterer.runClusterer(null);
+        
+//        GOClusterer clusterer = new GOClusterer(GOClusterer.readTSVGenesGroups(enrichrOut, 1, 9, false),
+//            new File(workDir, "similarities.log.json"));
+//        assertNotNull(clusterer.getDistances());
+//        clusterer.runClusterer(null);
 
 //        HashMap<String, String []> parameters = new HashMap<String, String []>();
 //        parameters.put("-C", new String [] {"3","4","5"});

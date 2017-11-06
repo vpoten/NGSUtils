@@ -23,6 +23,7 @@ import weka.core.DistanceFunction
 import weka.core.FastVector
 import weka.core.Instance
 import weka.core.Instances
+import weka.core.matrix.Matrix
 
 /**
  *
@@ -37,7 +38,7 @@ class GOClusterer {
     def dataset
     private clusterType = CentralClustererUtils.CLUST_KFCM
     private int maxTermsPerGroup = 50
-    private double enrichPVal = 0.05  // GO enrichment p-value threshold
+    private double enrichPVal = 0.05d  // GO enrichment p-value threshold
     
 
 //    /**
@@ -110,7 +111,17 @@ class GOClusterer {
     public GOClusterer(features, File simFile) {
         dataset = GOClusterer.createInstances((features instanceof List) ? features : features.keySet())
         def simJSON = new JsonSlurper().parseText(simFile.text)
-        // TODO
+        
+        distances = new Matrix(dataset.numInstances(), dataset.numInstances(), 0.0d)
+        def sortedFeatures = ((features instanceof List) ? features : features.keySet()).sort()
+        
+        for(simObj in simJSON) {
+            double val = 1.0d - simObj['similarity']
+            int i = sortedFeatures.indexOf(simObj['product1']['name'])
+            int j = sortedFeatures.indexOf(simObj['product2']['name'])
+            distances.set(i, j, val)
+            distances.set(j, i, val)
+        }
     }
     
     /**
