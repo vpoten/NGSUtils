@@ -87,8 +87,9 @@ public class GOClustererTest {
         
         String enrichrOut =
                 "/home/victor/Escritorio/Genotipado_Alternativo/colocalizacion/output_GSE50588/output_enrichr_100K.txt";
-        GOClusterer clusterer = new GOClusterer(workDir, "9606",
-                GOClusterer.readTSVGenesGroups(enrichrOut, 1, 9, false), namespaces);
+        GOClustererData data = new GOClustererData(workDir, "9606");
+        GOClusterer clusterer = new GOClusterer(data, 
+                GOClusterer.readTSVGenesGroups(enrichrOut, 1, 9, false), namespaces, 0.01);
         assertNotNull(clusterer.getDistances());
         clusterer.runClusterer(null);
 

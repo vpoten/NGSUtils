@@ -27,25 +27,19 @@ class GOFMBDistance implements DistanceFunction {
     protected FMBSimilarity similarity = null
     protected annotationMap //map with key=label, value=OntologyAnnotation
     protected similarityCache = [:] as TreeMap
-    protected logFile = null
-    protected logObjectList = null
+    protected logObjectList = []
 
     /**
      * 
      */ 
-    public GOFMBDistance(GOManager gom, annotation, logFilePath=null) {
-        if(logFilePath!=null) {
-            logObjectList = []
-            logFile = new File(logFilePath)
-        }
-        
-        similarity = logFile ? new FMBSimilarity(logObjectList: logObjectList) : new FMBSimilarity()
+    public GOFMBDistance(GOManager gom, annotation) {
+        similarity = new FMBSimilarity(logObjectList: logObjectList)
         similarity.setOntologyWrap(gom)
         annotationMap = annotation
     }
     
-    public void endLog() {
-        logFile?.write(JsonOutput.prettyPrint(JsonOutput.toJson(logObjectList)))
+    public void endLog(logFile) {
+        logFile.write(JsonOutput.prettyPrint(JsonOutput.toJson(logObjectList)))
     }
 
     public void setInstances(Instances insts) {

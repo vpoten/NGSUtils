@@ -25,12 +25,10 @@ class KernelFactory {
         int n = data.numInstances()
         Matrix mat = new Matrix(n,n)
         
-        double val1 = distFunc.distance(data.instance(0),data.instance(1))
-        
         for(int i=0; i<n; i++) {
             for(int j=i; j<n; j++) {
                 double val = distFunc.distance(data.instance(i),data.instance(j))
-                println "(${i}, ${j}) -> ${val}"
+                ///println "(${i}, ${j}) -> ${val}"
                 mat.set(i,j,val)
                 mat.set(j,i,val)
             }

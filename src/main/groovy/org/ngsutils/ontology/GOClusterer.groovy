@@ -5,9 +5,8 @@
 
 package org.ngsutils.ontology;
 
+import groovy.json.JsonSlurper
 import org.ngsutils.Utils
-import org.ngsutils.AnnotationDB
-import org.ngsutils.semantic.LinkedLifeDataFactory
 import org.ngsutils.maths.weka.KernelFactory
 import org.ngsutils.maths.weka.GOFMBDistance
 import org.ngsutils.maths.weka.clusterer.AbstractKernelFuzzyClusterer
@@ -16,7 +15,6 @@ import org.ngsutils.maths.weka.clusterer.Silhouette
 import org.ngsutils.semantic.NGSDataResource
 import org.ngsutils.semantic.query.GOQueryUtils
 import org.ngsutils.semantic.query.GeneQueryUtils
-import org.ngsutils.semantic.rdfutils.SimpleGraph
 import org.ngsutils.stats.BiNGO.BingoAlgorithm
 import org.ngsutils.stats.StatTestParams
 import org.openrdf.model.URI
@@ -31,9 +29,7 @@ import weka.core.Instances
  * @author victor
  */
 class GOClusterer {
-    def graph  // semantic data
-    GOManager goManager  // GeneOntology manager
-    def taxonomyId
+    GOClustererData goData
     def namespaces  // GeneOntology namespaces
     AbstractKernelFuzzyClusterer clusterer
     DistanceFunction distFunc
@@ -41,7 +37,7 @@ class GOClusterer {
     def dataset
     private clusterType = CentralClustererUtils.CLUST_KFCM
     private int maxTermsPerGroup = 50
-    private double enrichPVal = 0.01  // GO enrichment p-value threshold
+    private double enrichPVal = 0.05  // GO enrichment p-value threshold
     
 
 //    /**
@@ -89,42 +85,39 @@ class GOClusterer {
     
     /**
      *
-     * @param workDir
-     * @param taxId : taxonomy id; i.e. 9606
-     * @param data: list with genes or map {label: group_genes}
+     * @param data: GOClustererData object (semantic data)
+     * @param features: list with genes or map {label: group_genes}
      * @param namespaces: list with GO namespaces to include ("molecular_function", ...)
+     * @param pvalThr: p value threshold for significance
      */
-    public GOClusterer(String workDir, String taxId, data, _namespaces) {
-        // load semantic data
-        loadSemanticData(workDir, taxId)
+    public GOClusterer(GOClustererData data, features, _namespaces, pvalThr) {
+        goData = data
         namespaces = _namespaces
-        dataset = GOClusterer.createInstances((data instanceof List) ? data : data.keySet())
+        enrichPVal = pvalThr
+        dataset = GOClusterer.createInstances((features instanceof List) ? features : features.keySet())
       
-        def annotationMap = (data instanceof List) ? buildSingleGeneAnnotation() : buildGroupGeneAnnotation(data)
+        def annotationMap = (features instanceof List) ? buildSingleGeneAnnotation() : buildGroupGeneAnnotation(features)
         
-        distFunc = new GOFMBDistance(goManager, annotationMap, new File(workDir, 'similarities.log.json').path)
+        distFunc = new GOFMBDistance(goData.goManager, annotationMap)
         distances = KernelFactory.calcDistMatrix(dataset, distFunc)
-        distFunc.endLog()
-        //// printDistances(data.sort(), clusterer.distances)
     }
     
     /**
      * 
+     *  @param features: list with genes or map {label: group_genes}
+     *  @param simFile: JSON file with similarities
+     */
+    public GOClusterer(features, File simFile) {
+        dataset = GOClusterer.createInstances((features instanceof List) ? features : features.keySet())
+        def simJSON = new JsonSlurper().parseText(simFile.text)
+        // TODO
+    }
+    
+    /**
+     * write similarities between features to JSON file
      */ 
-    private loadSemanticData(String workDir, String taxId) {
-        taxonomyId = taxId
-        // load semantic data
-        graph = LinkedLifeDataFactory.loadRepository(LinkedLifeDataFactory.LIST_BASIC_GO, [taxonomyId], workDir)
-        
-        // get GOA file
-        def urlSrc = AnnotationDB.goAssocUrl(taxonomyId)
-        def name = urlSrc.substring( urlSrc.lastIndexOf('/')+1 )
-        def goaFile = "${workDir}${taxonomyId}/${name}"
-        
-        // create GO manager
-        goManager = new GOManager( graph )
-        goManager.calculateProbTerms(goaFile)
-        goManager.setEcodeFactors( GOEvidenceCodes.ecodeFactorsSet1 )
+    public writeSimilarities(path) {
+        distFunc.endLog(new File(path))
     }
     
     /**
@@ -132,8 +125,8 @@ class GOClusterer {
      * create annotation map using attribute names (genes)
      */
     private buildSingleGeneAnnotation() {
-        GOQueryUtils goQuery = new GOQueryUtils(graph)
-        GeneQueryUtils geneQuery = new GeneQueryUtils(graph)
+        GOQueryUtils goQuery = new GOQueryUtils(goData.graph)
+        GeneQueryUtils geneQuery = new GeneQueryUtils(goData.graph)
         def annotationMap = [:] as TreeMap
         
         int classIdx = dataset.classIndex()
@@ -146,7 +139,7 @@ class GOClusterer {
                 def terms = goQuery.getTerms(uri)
                 
                 // filter terms in namespaces
-                terms = terms.findAll{goManager.getNamespace(it) in namespaces}
+                terms = terms.findAll{goData.goManager.getNamespace(it) in namespaces}
                 
                 //create annotation
                 def annot = new OntologyAnnotation(id: label, product:label,
@@ -166,7 +159,7 @@ class GOClusterer {
         def annotationMap = [:] as TreeMap
         
         int classIdx = dataset.classIndex()
-        def ontology = new FMBGOntologyWrap(goManager: goManager)
+        def ontology = new FMBGOntologyWrap(goManager: goData.goManager)
         
         (0..dataset.numAttributes()-1).each{ i ->
             def att = dataset.attribute(i)
@@ -175,7 +168,7 @@ class GOClusterer {
                 def terms = enrichments[label].correctionMap.keySet()
                 
                 // filter terms in namespaces
-                terms = terms.findAll{goManager.getNamespace(it) in namespaces}
+                terms = terms.findAll{goData.goManager.getNamespace(it) in namespaces}
                 
                 // remove redundant terms
                 def redundant = terms.findAll{ontology.isAncestor(it, terms)}
@@ -343,22 +336,22 @@ class GOClusterer {
      *
      */
     public calcEnrichment(geneGroups) {
-        def geneQuery = new GeneQueryUtils(graph)
+        def geneQuery = new GeneQueryUtils(goData.graph)
         
         //prepare annotation
-        def annotation = NGSDataResource.create(graph)
-        annotation.load(taxonomyId)
+        def annotation = NGSDataResource.create(goData.graph)
+        annotation.load(goData.taxonomyId)
         
         def calcBingo = { featureSet ->
             //prepare stats params
             StatTestParams statParams = new StatTestParams()
             statParams.significance = enrichPVal
             statParams.annotation = annotation
-            statParams.taxonomyId = taxonomyId
+            statParams.taxonomyId = goData.taxonomyId
         
             //translate features to genes URI
             def genesAsURIs = 
-                featureSet.collect{ geneQuery.getGeneByName(it, taxonomyId)?.stringValue() }.findAll{ it!=null }
+                featureSet.collect{ geneQuery.getGeneByName(it, goData.taxonomyId)?.stringValue() }.findAll{ it!=null }
             
             statParams.annotation.selectedGenes = genesAsURIs
 
