@@ -89,11 +89,12 @@ public class GOClustererTest {
         namespaces.add("molecular_function");
         namespaces.add("biological_process");
         
-        GOClustererData data = new GOClustererData(workDir, "9606");
-         GOClusterer clusterer = new GOClusterer(data, 
-                GOClusterer.readTSVGenesGroups(enrichrOut, 1, 9, false), namespaces, 0.01);
-        assertNotNull(clusterer.getDistances());
-        clusterer.runClusterer(null);
+//        GOClustererData data = new GOClustererData(workDir, "9606");
+//         GOClusterer clusterer = new GOClusterer(data, 
+//                GOClusterer.readTSVGenesGroups(enrichrOut, 1, 9, false), namespaces, 0.01);
+//        assertNotNull(clusterer.getDistances());
+//        clusterer.writeSimilarities(new File(workDir, "similarities.log.json").getPath());
+//        clusterer.runClusterer(null);
         
 //        GOClusterer clusterer = new GOClusterer(GOClusterer.readTSVGenesGroups(enrichrOut, 1, 9, false),
 //            new File(workDir, "similarities.log.json"));

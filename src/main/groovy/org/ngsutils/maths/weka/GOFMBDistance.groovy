@@ -158,7 +158,7 @@ class GOFMBDistance implements DistanceFunction {
         
         if(!a1.terms || !a2.terms) {
             value = 0.0  // no similarity
-            // TODO <----- append to log when no similarity
+            similarity.appendZeroToLog(a1, a2)
         }
         else {
             value = similarity.afms(a1, a2)

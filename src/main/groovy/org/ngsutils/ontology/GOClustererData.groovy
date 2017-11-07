@@ -10,7 +10,8 @@ import org.ngsutils.semantic.LinkedLifeDataFactory
 import org.ngsutils.AnnotationDB
 
 /**
- *
+ * Source of semantic data and GO annotations for GOClusterer
+ * 
  * @author victor
  */
 class GOClustererData {

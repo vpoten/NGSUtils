@@ -134,4 +134,23 @@ class FMBSimilarity {
         
         logObjectList << simObject
     }
+    
+    /**
+     * append a zero similarity object to log
+     */
+    public void appendZeroToLog(OntologyAnnotation a1, OntologyAnnotation a2) {
+        if( logObjectList==null ) {
+            return
+        }
+        
+        def simObject = [
+            'product1': ['name': a1.id],
+            'product2': ['name': a2.id],
+            'nearestCommonAncestors': [],
+            'intersection': [],
+            'similarity': 0.0d
+        ]
+        
+        logObjectList << simObject
+    }
 }
