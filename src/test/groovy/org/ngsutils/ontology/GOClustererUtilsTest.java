@@ -44,7 +44,10 @@ public class GOClustererUtilsTest {
                 "/home/victor/Escritorio/Genotipado_Alternativo/colocalizacion/output_GSE50588/output_enrichr_100K.txt";
         double [] pvalues = {0.02, 0.015, 0.01};
         
-        GOClustererUtils.generateDistances(workDir, pvalues,
-                GOClusterer.readTSVGenesGroups(enrichrOut, 1, 9, false));
+        GOClustererUtils utils = new GOClustererUtils();
+        utils.setWorkDir(workDir);
+        utils.setFeatures(GOClusterer.readTSVGenesGroups(enrichrOut, 1, 9, false));
+        
+        utils.generateDistances(pvalues);
     }
 }
