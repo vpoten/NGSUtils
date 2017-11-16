@@ -287,8 +287,7 @@ class GOClusterer {
             }
         }
         
-        def bestOptions = null
-        double bestCoeff = -1.0d
+        def optionResults = []
         
         for(options in optionsList) {
             def wekaOpts = []
@@ -307,14 +306,9 @@ class GOClusterer {
                 new Silhouette(goClusterer.clusterer)
             }
             
-            // get best result
-            def silCoeff = silCoeffs.max{it.overall}
             def coeffs = silCoeffs.collect{it.overall}
             
-            if( silCoeff.overall > bestCoeff ) {
-                bestCoeff = silCoeff.overall
-                bestOptions = options
-            }
+            optionResults << ['silhouette': coeffs.max(), 'options': wekaOpts]
             
             // print clustering performance if debug==true
             if(debug) {
@@ -324,7 +318,9 @@ class GOClusterer {
             }
         }
         
-        return bestOptions
+        optionResults = optionResults.sort{-it['silhouette']}
+        
+        return optionResults
     }
     
     /**

@@ -18,7 +18,7 @@ class GOClustererUtils {
     
     String workDir
     def features
-
+    def searchResults = [:]
     
     /**
      * 
@@ -48,9 +48,10 @@ class GOClustererUtils {
      */
     def gridSearch(pValues, namespaceKey, parameters, numExecs) {
         for(pvalue in pValues) {
+            println "\n===== Grid search for pValue ${pvalue} ====="
             def distFile = GOClustererUtils.distFileName(pvalue, namespaceKey)
             def clusterer = new GOClusterer(features, new File(workDir, distFile))
-            GOClusterer.gridSearch(clusterer, parameters, numExecs, true)
+            searchResults[pvalue] = GOClusterer.gridSearch(clusterer, parameters, numExecs, true)
         }
     }
 }
