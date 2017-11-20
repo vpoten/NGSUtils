@@ -69,5 +69,6 @@ public class GOClustererUtilsTest {
         parameters.put("-epsilon", new String [] {"1e-3"});
         
         utils.gridSearch(pValues, "BP", parameters, 5);
+        //utils.printTop(0.015, 10);
     }
 }

@@ -19,6 +19,7 @@ class GOClustererUtils {
     String workDir
     def features
     def searchResults = [:]
+    boolean debug = false
     
     /**
      * 
@@ -51,7 +52,18 @@ class GOClustererUtils {
             println "\n===== Grid search for pValue ${pvalue} ====="
             def distFile = GOClustererUtils.distFileName(pvalue, namespaceKey)
             def clusterer = new GOClusterer(features, new File(workDir, distFile))
-            searchResults[pvalue] = GOClusterer.gridSearch(clusterer, parameters, numExecs, true)
+            searchResults[pvalue] = GOClusterer.gridSearch(clusterer, parameters, numExecs, debug)
+        }
+    }
+    
+    /**
+     *
+     */
+    def printTop(pvalue, num) {
+        def results = searchResults[pvalue]
+        
+        (0..num).each {
+            println "Silhouette [${results[it]['silhouette']}] -> ${results[it]['options']}"
         }
     }
 }
