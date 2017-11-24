@@ -20,6 +20,7 @@ import static org.junit.Assert.*;
  * @author victor
  */
 public class GOClustererTest {
+    static String workDir = "/home/victor/Escritorio/tests_ngsengine/go_clusterer/";
     
     public GOClustererTest() {
     }
@@ -42,7 +43,6 @@ public class GOClustererTest {
 
 //    @Test
 //    public void doGOClusterer() {
-//        String workDir = "/home/victor/Escritorio/tests_ngsengine/go_clusterer/";
 //        ArrayList<String> data = new ArrayList<String>();
 //        ArrayList<String> namespaces = new ArrayList<String>();
 //        
@@ -80,7 +80,6 @@ public class GOClustererTest {
     
     @Test
     public void doGOClusterer2() {
-        String workDir = "/home/victor/Escritorio/tests_ngsengine/go_clusterer/";
         ArrayList<String> namespaces = new ArrayList<String>();
         
         String enrichrOut =
@@ -106,5 +105,27 @@ public class GOClustererTest {
 //        parameters.put("-lambda", new String [] {"1","2","5"});
 //        parameters.put("-epsilon", new String [] {"1e-3"});
 //        GOClusterer.gridSearch(clusterer, parameters, 3, true);
+    }
+    
+    @Test
+    public void doGOClusterer3() {
+        String workDir2 = "/home/victor/Escritorio/Genotipado_Alternativo/colocalizacion/go_distances/";
+        String enrichrOut =
+                "/home/victor/Escritorio/Genotipado_Alternativo/colocalizacion/output_GSE50588/output_enrichr_100K.txt";
+        
+        GOClusterer clusterer = new GOClusterer(GOClusterer.readTSVGenesGroups(enrichrOut, 1, 9, false),
+                new File(workDir2, "go_similarities_010_BP.json"));
+        
+        String [][] wekaOptions = new String [][] {
+            {"-C", "3", "-lambda", "0.5", "-gamma", "1", "-K", "0", "-stdev", "1.0", "-epsilon", "1e-4"},
+            {"-C", "5", "-lambda", "2", "-gamma", "1", "-K", "0", "-stdev", "1.0", "-epsilon", "1e-4"},
+            {"-C", "7", "-lambda", "2", "-gamma", "1", "-K", "0", "-stdev", "1.0", "-epsilon", "1e-4"}
+        };
+        
+        for(int i=0; i<wekaOptions.length; i++) {
+            System.out.println("\n[" + i + "] ================");
+            clusterer.runClusterer(wekaOptions[i]);
+            clusterer.printDistributions();
+        }
     }
 }

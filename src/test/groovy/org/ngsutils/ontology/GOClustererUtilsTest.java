@@ -69,6 +69,10 @@ public class GOClustererUtilsTest {
         parameters.put("-epsilon", new String [] {"1e-3"});
         
         utils.gridSearch(pValues, "BP", parameters, 5);
-        //utils.printTop(0.015, 10);
+        
+        for(double pval : pValues) {
+            System.out.println("\nBest for pvalue " + pval + ":");
+            utils.printTop(pval, 5);
+        }
     }
 }

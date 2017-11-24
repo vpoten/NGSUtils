@@ -34,8 +34,8 @@ class GOClusterer {
     def namespaces  // GeneOntology namespaces
     AbstractKernelFuzzyClusterer clusterer
     DistanceFunction distFunc
-    def distances
-    def dataset
+    Matrix distances
+    Instances dataset
     private clusterType = CentralClustererUtils.CLUST_KFCM
     private int maxTermsPerGroup = 50
     private double enrichPVal = 0.05d  // GO enrichment p-value threshold
@@ -221,6 +221,17 @@ class GOClusterer {
             for(int j=i; j<n; j++) {
                 System.out.println(labels[i] + ',' + labels[j] + ',' + mat.get(i,j))
             }
+        }
+    }
+    
+    /**
+     * to debug clustering results
+     */ 
+    public void printDistributions() {
+        (0..dataset.numInstances()-1).each{
+            def inst = dataset.instance(it)
+            def dist = clusterer.distributionForInstance(inst)
+            println "${it}: ${dist}"
         }
     }
 
