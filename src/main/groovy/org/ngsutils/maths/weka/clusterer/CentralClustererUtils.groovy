@@ -50,7 +50,7 @@ class CentralClustererUtils {
     /**
      *
      */
-    static def runClusterer(arffFile, boolean classPresent, String clustName, options) {
+    static def runClusterer(arffFile, boolean classPresent, String clustName, options, boolean debug) {
         Instances data = new Instances( Utils.createReader(new File(arffFile)) )
         Instances dataClusterer = null
         
@@ -81,7 +81,6 @@ class CentralClustererUtils {
         
         clusterer.buildClusterer(dataClusterer)
         
-        
         //cluster evaluation
         ClusterEvaluation eval = new ClusterEvaluation()
         eval.setClusterer(clusterer)
@@ -89,6 +88,17 @@ class CentralClustererUtils {
         
         println "# of iterations: ${clusterer.iterations}"
         println eval.clusterResultsToString()
+        
+        if(debug==true) {
+            // print instance memberships
+            println "\nInstance memberships:"
+            (0..data.numInstances()-1).each{
+                def inst = data.instance(it)
+                def dist = clusterer.distributionForInstance(inst)
+                println "${it}: ${dist}"
+            }
+        }
+        
         return clusterer
     }
     

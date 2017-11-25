@@ -43,9 +43,9 @@ public class CentralClustererUtilsTest {
         String file = "/home/victor/software/weka-3-6-9/data/iris.2D.arff";
         //String file = "/home/victor/software/weka-3-6-9/data/iris.arff";
         
-        //String [] options = new String [] {"-C","3","-lambda","10","-K","1","-stdev","0.5"};
-        String [] options = new String [] {"-C","3","-lambda","10","-gamma","0.1","-K","1"};
+        String [] options = new String [] {"-C","3","-lambda","10","-K","1","-stdev","0.5"};
+        //String [] options = new String [] {"-C","3","-lambda","10","-gamma","0.1","-K","1"};
         
-        CentralClustererUtils.runClusterer(file, true, CentralClustererUtils.getCLUST_KPCM(), options);
+        CentralClustererUtils.runClusterer(file, true, CentralClustererUtils.getCLUST_KFCM(), options, true);
     }
 }
