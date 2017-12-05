@@ -388,4 +388,12 @@ class GOClusterer {
         return results
     }
     
+    /**
+     *
+     */
+    public getNotIsolatedFeatures() {
+        dataset.numInstances()
+        // TODO <-----
+    }
+    
 }
