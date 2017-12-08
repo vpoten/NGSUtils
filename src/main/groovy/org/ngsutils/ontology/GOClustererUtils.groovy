@@ -52,6 +52,14 @@ class GOClustererUtils {
             println "\n===== Grid search for pValue ${pvalue} ====="
             def distFile = GOClustererUtils.distFileName(pvalue, namespaceKey)
             def clusterer = new GOClusterer(features, new File(workDir, distFile))
+            def notIsolated = clusterer.getNotIsolatedFeatures();
+            
+            if( features instanceof Map ) {
+                notIsolated = notIsolated.collectEntries{[(it): features[it]]}
+            }
+            
+            clusterer = new GOClusterer(notIsolated, new File(workDir, distFile))
+            
             searchResults[pvalue] = GOClusterer.gridSearch(clusterer, parameters, numExecs, debug)
         }
     }

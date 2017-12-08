@@ -36,6 +36,7 @@ class GOClusterer {
     DistanceFunction distFunc
     Matrix distances
     Instances dataset
+    List features
     private clusterType = CentralClustererUtils.CLUST_KFCM
     private int maxTermsPerGroup = 50
     private double enrichPVal = 0.05d  // GO enrichment p-value threshold
@@ -95,7 +96,7 @@ class GOClusterer {
         goData = data
         namespaces = _namespaces
         enrichPVal = pvalThr
-        dataset = GOClusterer.createInstances((features instanceof List) ? features : features.keySet())
+        dataset = this.createInstances((features instanceof List) ? features : features.keySet())
       
         def annotationMap = (features instanceof List) ? buildSingleGeneAnnotation() : buildGroupGeneAnnotation(features)
         
@@ -109,7 +110,7 @@ class GOClusterer {
      *  @param simFile: JSON file with similarities
      */
     public GOClusterer(features, File simFile) {
-        dataset = GOClusterer.createInstances((features instanceof List) ? features : features.keySet())
+        dataset = this.createInstances((features instanceof List) ? features : features.keySet())
         def simJSON = new JsonSlurper().parseText(simFile.text)
         
         distances = new Matrix(dataset.numInstances(), dataset.numInstances(), 0.0d)
@@ -119,6 +120,11 @@ class GOClusterer {
             double val = 1.0d - simObj['similarity']
             int i = sortedFeatures.indexOf(simObj['product1']['name'])
             int j = sortedFeatures.indexOf(simObj['product2']['name'])
+            
+            if( i<0 || j<0 ) {
+                continue
+            }
+            
             distances.set(i, j, val)
             distances.set(j, i, val)
         }
@@ -240,12 +246,12 @@ class GOClusterer {
      * each pattern has a '1' for the attribute of its gene and '0' otherwise.
      * The generated dataset is valid for clustering of single gene patterns.
      */
-    private static Instances createInstances(data) {
-        data = data.sort()
+    private Instances createInstances(data) {
+        features = data.sort()
         
         def attributes = new FastVector()
         
-        data.each{
+        features.each{
             FastVector labels = new FastVector();
             labels.addElement("0");
             labels.addElement("1");
@@ -254,10 +260,10 @@ class GOClusterer {
         
         Instances dataset = new Instances("features-go", attributes, 0);
         
-        data.eachWithIndex{ val, i->
-            def values = new double [data.size()]
+        features.eachWithIndex{ val, i->
+            def values = new double [features.size()]
             
-            (0..data.size()-1).each{
+            (0..features.size()-1).each{
                 values[it] = dataset.attribute(it).indexOfValue(it==i ? "1" : "0");
             }
             
@@ -337,7 +343,7 @@ class GOClusterer {
     /**
      *
      */
-    public static readTSVGenesGroups(file, int idField, int genesField, boolean header = false) {
+    public static Map readTSVGenesGroups(file, int idField, int genesField, boolean header = false) {
         def groups = [:]
         def reader = Utils.createReader(new File(file))
         if( header ){ reader.readLine() }
@@ -391,9 +397,14 @@ class GOClusterer {
     /**
      *
      */
-    public getNotIsolatedFeatures() {
-        dataset.numInstances()
-        // TODO <-----
+    public List getNotIsolatedFeatures() {
+        int num = dataset.numInstances()
+        
+        def indexes = (0..(num-1)).findAll{ i ->
+            (0..(num-1)).any{ j -> (i != j) ? distances.get(i, j) < 1.0 : false }
+        }
+        
+        return indexes.collect{ features[it] }
     }
     
 }

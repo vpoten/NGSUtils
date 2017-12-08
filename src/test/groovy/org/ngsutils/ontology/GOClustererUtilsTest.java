@@ -61,12 +61,12 @@ public class GOClustererUtilsTest {
         utils.setWorkDir(GOClustererUtilsTest.workDir);
         utils.setFeatures(GOClusterer.readTSVGenesGroups(GOClustererUtilsTest.enrichrOut, 1, 9, false));
                 
-        double [] pValues = new double [] {0.015, 0.0125, 0.01};
+        double [] pValues = new double [] {0.01};  // {0.015, 0.0125, 0.01};
         
         HashMap<String, String []> parameters = new HashMap<String, String []>();
-        parameters.put("-C", new String [] {"3","5","7","10"}); // {"3","4","5","6","7","8","9","10"});
-        parameters.put("-lambda", new String [] {"0.5","1","2","5","10","15"});
-        parameters.put("-epsilon", new String [] {"1e-3"});
+        parameters.put("-C", new String [] {"3","4","5","6","7"});
+        parameters.put("-lambda", new String [] {"0.05","0.1","0.25","0.5","1","2","5","10","15","25"});
+        parameters.put("-epsilon", new String [] {"1e-4"});
         
         utils.gridSearch(pValues, "BP", parameters, 5);
         

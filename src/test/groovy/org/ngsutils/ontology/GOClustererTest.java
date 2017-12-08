@@ -8,6 +8,8 @@ package org.ngsutils.ontology;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -113,13 +115,25 @@ public class GOClustererTest {
         String enrichrOut =
                 "/home/victor/Escritorio/Genotipado_Alternativo/colocalizacion/output_GSE50588/output_enrichr_100K.txt";
         
-        GOClusterer clusterer = new GOClusterer(GOClusterer.readTSVGenesGroups(enrichrOut, 1, 9, false),
-                new File(workDir2, "go_similarities_010_BP.json"));
+        Map geneGroups = GOClusterer.readTSVGenesGroups(enrichrOut, 1, 9, false);
+        GOClusterer clusterer = new GOClusterer(geneGroups, new File(workDir2, "go_similarities_010_BP.json"));
+        
+        List<String> notIsolated = clusterer.getNotIsolatedFeatures();
+        HashMap notIsolatedGroups = new HashMap();
+        
+        for(String feature : notIsolated) {
+            notIsolatedGroups.put(feature, geneGroups.get(feature));
+        }
+        
+        clusterer = new GOClusterer(notIsolatedGroups, new File(workDir2, "go_similarities_010_BP.json"));
+        
         
         String [][] wekaOptions = new String [][] {
-            {"-C", "3", "-lambda", "0.5", "-gamma", "1", "-K", "0", "-stdev", "1.0", "-epsilon", "1e-4"},
-            {"-C", "5", "-lambda", "2", "-gamma", "1", "-K", "0", "-stdev", "1.0", "-epsilon", "1e-4"},
-            {"-C", "7", "-lambda", "2", "-gamma", "1", "-K", "0", "-stdev", "1.0", "-epsilon", "1e-4"}
+            {"-C", "4", "-lambda", "10", "-gamma", "1", "-K", "0", "-stdev", "1.0", "-epsilon", "1e-4"},
+            {"-C", "4", "-lambda", "15", "-gamma", "1", "-K", "0", "-stdev", "1.0", "-epsilon", "1e-4"},
+            {"-C", "4", "-lambda", "25", "-gamma", "1", "-K", "0", "-stdev", "1.0", "-epsilon", "1e-4"},
+            {"-C", "3", "-lambda", "0.1", "-gamma", "1", "-K", "0", "-stdev", "1.0", "-epsilon", "1e-4"},
+            {"-C", "3", "-lambda", "0.25", "-gamma", "1", "-K", "0", "-stdev", "1.0", "-epsilon", "1e-4"}
         };
         
         for(int i=0; i<wekaOptions.length; i++) {
