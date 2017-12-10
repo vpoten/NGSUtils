@@ -206,6 +206,13 @@ class GOClusterer {
     }
     
     /**
+     * set Kernel Possibilistic C-Means clustering
+     */ 
+    public void setPossibilistic() {
+        clusterType = CentralClustererUtils.CLUST_KPCM
+    }
+    
+    /**
      * 
      * @param options: clusterer options (weka format)
      */ 

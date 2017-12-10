@@ -47,7 +47,7 @@ class GOClustererUtils {
     /**
      *
      */
-    def gridSearch(pValues, namespaceKey, parameters, numExecs) {
+    def gridSearch(pValues, namespaceKey, parameters, numExecs, possibilistic = false) {
         for(pvalue in pValues) {
             println "\n===== Grid search for pValue ${pvalue} ====="
             def distFile = GOClustererUtils.distFileName(pvalue, namespaceKey)
@@ -59,6 +59,9 @@ class GOClustererUtils {
             }
             
             clusterer = new GOClusterer(notIsolated, new File(workDir, distFile))
+            if( possibilistic == true ){
+                clusterer.setPossibilistic()
+            }
             
             searchResults[pvalue] = GOClusterer.gridSearch(clusterer, parameters, numExecs, debug)
         }

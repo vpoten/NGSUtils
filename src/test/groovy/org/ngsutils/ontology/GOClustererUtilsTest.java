@@ -68,7 +68,7 @@ public class GOClustererUtilsTest {
         parameters.put("-lambda", new String [] {"0.05","0.1","0.25","0.5","1","2","5","10","15","25"});
         parameters.put("-epsilon", new String [] {"1e-4"});
         
-        utils.gridSearch(pValues, "BP", parameters, 20);
+        utils.gridSearch(pValues, "BP", parameters, 20, false);
         
         for(double pval : pValues) {
             System.out.println("\nBest for pvalue " + pval + ":");
