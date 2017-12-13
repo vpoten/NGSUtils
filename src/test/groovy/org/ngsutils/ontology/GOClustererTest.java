@@ -141,6 +141,7 @@ public class GOClustererTest {
             System.out.println("\n[" + i + "] ================");
             clusterer.runClusterer(wekaOptions[i]);
             clusterer.printDistributions();
+            clusterer.getClustering();
         }
     }
 }

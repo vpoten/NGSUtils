@@ -247,6 +247,17 @@ class GOClusterer {
             println "${it}: ${dist}"
         }
     }
+    
+    /**
+     * Get clustering result
+     * 
+     * @return List of List with feature names
+     */ 
+    public List getClustering() {
+        def result = clusterer.getClustering()
+        result = result.collect{ cluster-> cluster.collect{features[it]} }
+        return result
+    }
 
     /**
      * Create a dataset on the fly; each feature (gene) is an attribute of the dataset and
