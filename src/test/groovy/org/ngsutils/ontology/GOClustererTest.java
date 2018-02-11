@@ -129,9 +129,9 @@ public class GOClustererTest {
         
         
         String [][] wekaOptions = new String [][] {
-            {"-C", "4", "-lambda", "10", "-gamma", "1", "-K", "0", "-stdev", "1.0", "-epsilon", "1e-4"},
-            {"-C", "4", "-lambda", "15", "-gamma", "1", "-K", "0", "-stdev", "1.0", "-epsilon", "1e-4"},
-            {"-C", "4", "-lambda", "25", "-gamma", "1", "-K", "0", "-stdev", "1.0", "-epsilon", "1e-4"},
+            //{"-C", "4", "-lambda", "10", "-gamma", "1", "-K", "0", "-stdev", "1.0", "-epsilon", "1e-4"},
+            //{"-C", "4", "-lambda", "15", "-gamma", "1", "-K", "0", "-stdev", "1.0", "-epsilon", "1e-4"},
+            //{"-C", "4", "-lambda", "25", "-gamma", "1", "-K", "0", "-stdev", "1.0", "-epsilon", "1e-4"},
             {"-C", "3", "-lambda", "0.1", "-gamma", "1", "-K", "0", "-stdev", "1.0", "-epsilon", "1e-4"},
             {"-C", "3", "-lambda", "0.25", "-gamma", "1", "-K", "0", "-stdev", "1.0", "-epsilon", "1e-4"},
             {"-C", "3", "-lambda", "25", "-gamma", "1", "-K", "0", "-stdev", "1.0", "-epsilon", "1e-4"}
