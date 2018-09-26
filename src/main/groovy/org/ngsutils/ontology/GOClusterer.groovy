@@ -244,7 +244,7 @@ class GOClusterer {
         (0..dataset.numInstances()-1).each{
             def inst = dataset.instance(it)
             def dist = clusterer.distributionForInstance(inst)
-            println "${it}: ${dist}"
+            println "${it}: ${dist.collect{ val-> String.format("%.3f", val)}}"
         }
     }
     
@@ -257,6 +257,15 @@ class GOClusterer {
         def result = clusterer.getClustering()
         result = result.collect{ cluster-> cluster.collect{features[it]} }
         return result
+    }
+    
+    /**
+     * Print clustering result
+     */ 
+    public void printClustering(result) {
+        result.each{ cluster->
+            println "${cluster}"
+        }
     }
 
     /**
