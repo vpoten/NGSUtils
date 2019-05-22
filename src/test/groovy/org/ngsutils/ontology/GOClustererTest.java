@@ -109,39 +109,39 @@ public class GOClustererTest {
 //        GOClusterer.gridSearch(clusterer, parameters, 3, true);
     }
     
-    @Test
-    public void doGOClusterer3() {
-        String workDir2 = "/home/victor/Escritorio/Genotipado_Alternativo/colocalizacion/go_distances/";
-        String enrichrOut =
-                "/home/victor/Escritorio/Genotipado_Alternativo/colocalizacion/output_GSE50588/output_enrichr_100K.txt";
-        
-        Map geneGroups = GOClusterer.readTSVGenesGroups(enrichrOut, 1, 9, false);
-        GOClusterer clusterer = new GOClusterer(geneGroups, new File(workDir2, "go_similarities_010_BP.json"));
-        
-        List<String> notIsolated = clusterer.getNotIsolatedFeatures();
-        HashMap notIsolatedGroups = new HashMap();
-        
-        for(String feature : notIsolated) {
-            notIsolatedGroups.put(feature, geneGroups.get(feature));
-        }
-        
-        clusterer = new GOClusterer(notIsolatedGroups, new File(workDir2, "go_similarities_010_BP.json"));
-        
-        
-        String [][] wekaOptions = new String [][] {
-            //{"-C", "4", "-lambda", "10", "-gamma", "1", "-K", "0", "-stdev", "1.0", "-epsilon", "1e-4"},
-            //{"-C", "4", "-lambda", "15", "-gamma", "1", "-K", "0", "-stdev", "1.0", "-epsilon", "1e-4"},
-            //{"-C", "4", "-lambda", "25", "-gamma", "1", "-K", "0", "-stdev", "1.0", "-epsilon", "1e-4"},
-            {"-C", "3", "-lambda", "0.1", "-gamma", "1", "-K", "0", "-stdev", "1.0", "-epsilon", "1e-4"},
-            {"-C", "3", "-lambda", "0.25", "-gamma", "1", "-K", "0", "-stdev", "1.0", "-epsilon", "1e-4"},
-            {"-C", "3", "-lambda", "25", "-gamma", "1", "-K", "0", "-stdev", "1.0", "-epsilon", "1e-4"}
-        };
-        
-        for(int i=0; i<wekaOptions.length; i++) {
-            System.out.println("\n[" + i + "] ================");
-            clusterer.runClusterer(wekaOptions[i]);
-            clusterer.printDistributions();
-            clusterer.printClustering( clusterer.getClustering() );
-        }
-    }
+//    @Test
+//    public void doGOClusterer3() {
+//        String workDir2 = "/home/victor/Escritorio/Genotipado_Alternativo/colocalizacion/go_distances/";
+//        String enrichrOut =
+//                "/home/victor/Escritorio/Genotipado_Alternativo/colocalizacion/output_GSE50588/output_enrichr_100K.txt";
+//        
+//        Map geneGroups = GOClusterer.readTSVGenesGroups(enrichrOut, 1, 9, false);
+//        GOClusterer clusterer = new GOClusterer(geneGroups, new File(workDir2, "go_similarities_010_BP.json"));
+//        
+//        List<String> notIsolated = clusterer.getNotIsolatedFeatures();
+//        HashMap notIsolatedGroups = new HashMap();
+//        
+//        for(String feature : notIsolated) {
+//            notIsolatedGroups.put(feature, geneGroups.get(feature));
+//        }
+//        
+//        clusterer = new GOClusterer(notIsolatedGroups, new File(workDir2, "go_similarities_010_BP.json"));
+//        
+//        
+//        String [][] wekaOptions = new String [][] {
+//            //{"-C", "4", "-lambda", "10", "-gamma", "1", "-K", "0", "-stdev", "1.0", "-epsilon", "1e-4"},
+//            //{"-C", "4", "-lambda", "15", "-gamma", "1", "-K", "0", "-stdev", "1.0", "-epsilon", "1e-4"},
+//            //{"-C", "4", "-lambda", "25", "-gamma", "1", "-K", "0", "-stdev", "1.0", "-epsilon", "1e-4"},
+//            {"-C", "3", "-lambda", "0.1", "-gamma", "1", "-K", "0", "-stdev", "1.0", "-epsilon", "1e-4"},
+//            {"-C", "3", "-lambda", "0.25", "-gamma", "1", "-K", "0", "-stdev", "1.0", "-epsilon", "1e-4"},
+//            {"-C", "3", "-lambda", "25", "-gamma", "1", "-K", "0", "-stdev", "1.0", "-epsilon", "1e-4"}
+//        };
+//        
+//        for(int i=0; i<wekaOptions.length; i++) {
+//            System.out.println("\n[" + i + "] ================");
+//            clusterer.runClusterer(wekaOptions[i]);
+//            clusterer.printDistributions();
+//            clusterer.printClustering( clusterer.getClustering() );
+//        }
+//    }
 }

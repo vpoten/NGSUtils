@@ -43,16 +43,16 @@ public class GOClustererUtilsTest {
     public void tearDown() {
     }
 
-    @Test
-    public void testGenerateSimilarities() {
-        double [] pvalues = {0.02, 0.015, 0.01};
-        
-        GOClustererUtils utils = new GOClustererUtils();
-        utils.setWorkDir(GOClustererUtilsTest.workDir);
-        utils.setFeatures(GOClusterer.readTSVGenesGroups(enrichrOut, 1, 9, false));
-        
-        utils.generateDistances(pvalues);
-    }
+//    @Test
+//    public void testGenerateSimilarities() {
+//        double [] pvalues = {0.02, 0.015, 0.01};
+//        
+//        GOClustererUtils utils = new GOClustererUtils();
+//        utils.setWorkDir(GOClustererUtilsTest.workDir);
+//        utils.setFeatures(GOClusterer.readTSVGenesGroups(enrichrOut, 1, 9, false));
+//        
+//        utils.generateDistances(pvalues);
+//    }
     
 //    @Test
 //    public void testGridSearch() {

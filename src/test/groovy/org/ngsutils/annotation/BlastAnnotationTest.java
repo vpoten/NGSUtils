@@ -81,14 +81,14 @@ public class BlastAnnotationTest {
     }
     
     
-    @Test
-    public void testGetSequences() {
-        GeneIndex geneidx = new GeneIndex(new File(pathGtf1));
-        
-        assertNotNull( BlastAnnotation.getSequences(geneidx.getIsoforms(), pathHg19) );
-        
-        assertNotNull( geneidx.getIsoforms().iterator().next().getSequence() );
-    }
+//    @Test
+//    public void testGetSequences() {
+//        GeneIndex geneidx = new GeneIndex(new File(pathGtf1));
+//        
+//        assertNotNull( BlastAnnotation.getSequences(geneidx.getIsoforms(), pathHg19) );
+//        
+//        assertNotNull( geneidx.getIsoforms().iterator().next().getSequence() );
+//    }
     
     
 //    @Test
