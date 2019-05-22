@@ -139,9 +139,6 @@
                 <groupId>org.codehaus.groovy</groupId>
                 <artifactId>groovy-eclipse-batch</artifactId>
                 <version>2.5.7-01</version>
-                <!-- or choose a different compiler version -->
-                <!-- <version>1.8.6-01</version> -->
-                <!-- <version>1.7.10-06</version> -->
               </dependency>
             </dependencies>
         </plugin>
