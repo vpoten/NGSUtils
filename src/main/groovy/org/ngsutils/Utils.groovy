@@ -108,7 +108,7 @@ public class Utils {
         if( !file.startsWith(File.separator) ){
             //load as resource
             return new BufferedReader(
-                    new InputStreamReader( getClass().getResourceAsStream('/'+file)) );
+                    new InputStreamReader( Utils.class.getResourceAsStream('/'+file)) );
         }
 
         return createReader(new File(file));
